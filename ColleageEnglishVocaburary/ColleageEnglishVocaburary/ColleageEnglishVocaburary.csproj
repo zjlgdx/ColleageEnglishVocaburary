@@ -200,6 +200,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AudioSharedLibrary\AudioSharedLibrary.csproj">
+      <Project>{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}</Project>
+      <Name>AudioSharedLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PlaylistFilePlaybackAgent\PlaylistFilePlaybackAgent.csproj">
       <Project>{C719E871-FA32-472F-B2DB-9852E47FCA8E}</Project>
       <Name>PlaylistFilePlaybackAgent</Name>

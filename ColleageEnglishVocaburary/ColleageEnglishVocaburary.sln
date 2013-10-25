@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleAudioPlaybackAgent", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaylistFilePlaybackAgent", "PlaylistFilePlaybackAgent\PlaylistFilePlaybackAgent.csproj", "{C719E871-FA32-472F-B2DB-9852E47FCA8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSharedLibrary", "AudioSharedLibrary\AudioSharedLibrary.csproj", "{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,14 @@ Global
 		{C719E871-FA32-472F-B2DB-9852E47FCA8E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C719E871-FA32-472F-B2DB-9852E47FCA8E}.Release|ARM.ActiveCfg = Release|Any CPU
 		{C719E871-FA32-472F-B2DB-9852E47FCA8E}.Release|x86.ActiveCfg = Release|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4EB47B8F-AB7B-4CD6-82F8-BEA9DD594480}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

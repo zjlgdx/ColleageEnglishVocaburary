@@ -1,4 +1,7 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
+using AudioSharedLibrary;
 using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.ViewModels;
@@ -22,6 +25,8 @@ namespace ColleageEnglishVocaburary
 {
     public partial class WordList : PhoneApplicationPage
     {
+        private DispatcherTimer playTimer;
+        private EventHandler playTimerTickEventHandler;
 
         private CourseViewModel viewModel = null;
 
@@ -45,13 +50,35 @@ namespace ColleageEnglishVocaburary
         {
             InitializeComponent();
 
+            playTimer = new DispatcherTimer();
+            playTimer.Interval = TimeSpan.FromMilliseconds(1000);
+            playTimerTickEventHandler = new EventHandler(PlayTimer_Tick);
+
             ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["DefaultAppBar"];
 
             DataContext = ViewModel;
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            playTimer.Stop();
+            playTimer.Tick -= playTimerTickEventHandler;
+            BackgroundAudioPlayer.Instance.PlayStateChanged -= OnBackgroundAudioPlayerPlayStateChanged;
+            base.OnNavigatedFrom(e);
+        }
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            // Close the background audio player in case it 
+            // was running from a previous debugging session.
+            BackgroundAudioPlayer.Instance.Close();
+
+            // Set PlayStateChanged handler
+            BackgroundAudioPlayer.Instance.PlayStateChanged += OnBackgroundAudioPlayerPlayStateChanged;
+
+            playTimer.Tick += playTimerTickEventHandler;
+            playTimer.Start();
+
             string courseId = NavigationContext.QueryString["courseId"];
             ViewModel.Id = courseId.Replace("/", "_");
             using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
@@ -270,37 +297,11 @@ namespace ColleageEnglishVocaburary
 
             if (WordsList.SelectedItems.Count > 0)
             {
-                ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["PlayAppBar"];
-
-                // Create playlist
-                playlist = new Playlist();
-
-                // Build the playlist
-                int count = 0;
-                foreach (WordViewModel word in WordsList.SelectedItems)
-                {
-                    
-                    EnabledPlayerControls playerControls =
-                            EnabledPlayerControls.Pause |
-                            (count != 0 ? EnabledPlayerControls.SkipPrevious : 0) |
-                            (count != WordsList.SelectedItems.Count - 1 ? EnabledPlayerControls.SkipNext : 0);
-
-                    PlaylistTrack track = new PlaylistTrack
-                    {
-                        Source = word.WordVoice,
-                        Title = word.Word,
-                        Artist = "College English",
-                        Album = "College English Book",
-                        PlayerControls = playerControls
-                    };
-                    playlist.Tracks.Add(track);
-
-                    count++;
-                }
                 
 
-                // Save it to isolated storage
-                playlist.Save("ColleageEnglishVocaburaryPlaylist.xml");
+                ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["PlayAppBar"];
+
+                
 
                 // Set fields of appbar buttons; otherwise they're null
                 prevAppBarButton = this.ApplicationBar.Buttons[0] as ApplicationBarIconButton;
@@ -308,8 +309,7 @@ namespace ColleageEnglishVocaburary
                 pauseAppBarButton = this.ApplicationBar.Buttons[2] as ApplicationBarIconButton;
                 nextAppBarButton = this.ApplicationBar.Buttons[3] as ApplicationBarIconButton;
 
-                // Set PlayStateChanged handler
-                BackgroundAudioPlayer.Instance.PlayStateChanged += OnBackgroundAudioPlayerPlayStateChanged;
+                
 
                 // Set CompositionTarget.Rendering handler
                 //CompositionTarget.Rendering += OnCompositionTargetRendering;
@@ -321,61 +321,15 @@ namespace ColleageEnglishVocaburary
             }
         }
 
-        private void OnCompositionTargetRendering(object sender, EventArgs e)
-        {
-            // 
-            AudioTrack audioTrack = null;
-            TimeSpan position = TimeSpan.Zero;
-            TimeSpan duration = TimeSpan.Zero;
-
-            try
-            {
-                // Sometimes these property accesses will raise exceptions
-                audioTrack = BackgroundAudioPlayer.Instance.Track;
-
-                if (audioTrack != null)
-                {
-                    duration = audioTrack.Duration;
-                    position = BackgroundAudioPlayer.Instance.Position;
-                }
-            }
-            catch
-            {
-            }
-
-            if (audioTrack != null)
-            {
-               // elapsedDuration.Text = position.ToString("m\\:ss\\.f");
-                //totalDuration.Text = duration.ToString("m\\:ss\\.f");
-
-                // Change the Slider position, but set a flag to 
-                //  avoid the ValueChanged handler from being confused.
-               // settingSliderFromPlay = true;
-
-                //if (duration.Ticks > 0)
-                //    positionSlider.Value = (double)position.Ticks / duration.Ticks;
-                //else
-                //    positionSlider.Value = 0;
-
-                //settingSliderFromPlay = false;
-            }
-            else
-            {
-                //elapsedDuration.Text = null;
-                //totalDuration.Text = null;
-                //positionSlider.Value = 0;
-            }
-        }
 
         void UpdateScreen()
         {
-            PlayState state = PlayState.Unknown;
+
             AudioTrack audioTrack = null;
 
             try
             {
                 // Sometimes these property accesses will raise exceptions
-                state = BackgroundAudioPlayer.Instance.PlayerState;
                 audioTrack = BackgroundAudioPlayer.Instance.Track;
             }
             catch
@@ -391,11 +345,15 @@ namespace ColleageEnglishVocaburary
              //   trackText.Text = audioTrack.Title;
 
            //     positionSlider.Visibility = Visibility.Visible;
+                if (prevAppBarButton != null)
+                {
+                    prevAppBarButton.IsEnabled = 0 != (audioTrack.PlayerControls & EnabledPlayerControls.SkipPrevious);
+                    nextAppBarButton.IsEnabled = 0 != (audioTrack.PlayerControls & EnabledPlayerControls.SkipNext);
+                    playAppBarButton.IsEnabled = BackgroundAudioPlayer.Instance.PlayerState == PlayState.Paused;
+                    pauseAppBarButton.IsEnabled = BackgroundAudioPlayer.Instance.PlayerState == PlayState.Playing;
+                }
 
-                prevAppBarButton.IsEnabled = 0 != (audioTrack.PlayerControls & EnabledPlayerControls.SkipPrevious);
-                nextAppBarButton.IsEnabled = 0 != (audioTrack.PlayerControls & EnabledPlayerControls.SkipNext);
-                playAppBarButton.IsEnabled = BackgroundAudioPlayer.Instance.PlayerState == PlayState.Paused;
-                pauseAppBarButton.IsEnabled = BackgroundAudioPlayer.Instance.PlayerState == PlayState.Playing;
+               
             }
             else
             {
@@ -404,11 +362,13 @@ namespace ColleageEnglishVocaburary
            //     trackText.Text = null;
 
            //     positionSlider.Visibility = Visibility.Collapsed;
-
-                prevAppBarButton.IsEnabled = false;
-                playAppBarButton.IsEnabled = true;
-                pauseAppBarButton.IsEnabled = false;
-                nextAppBarButton.IsEnabled = false;
+                if (prevAppBarButton != null)
+                {
+                    prevAppBarButton.IsEnabled = false;
+                    playAppBarButton.IsEnabled = true;
+                    pauseAppBarButton.IsEnabled = false;
+                    nextAppBarButton.IsEnabled = false;
+                }
             }
         }
 
@@ -431,9 +391,58 @@ namespace ColleageEnglishVocaburary
 
         private void OnPlayAppBarButtonClick(object sender, EventArgs e)
         {
-            if (playlist != null && playlist.Tracks.Count > 0)
+            if (WordsList.SelectedItems.Count > 0)
             {
-                
+                // Create playlist
+                playlist = new Playlist();
+
+                // Build the playlist
+                int count = 0;
+                foreach (WordViewModel word in WordsList.SelectedItems)
+                {
+
+                    EnabledPlayerControls playerControls =
+                            EnabledPlayerControls.Pause |
+                            (count != 0 ? EnabledPlayerControls.SkipPrevious : 0) |
+                            (count != WordsList.SelectedItems.Count - 1 ? EnabledPlayerControls.SkipNext : 0);
+
+                    PlaylistTrack track = new PlaylistTrack
+                    {
+                        Source = word.WordVoice,
+                        Title = word.Word,
+                        Artist = "College English",
+                        Album = "College English Book",
+                        PlayerControls = playerControls
+                    };
+                    playlist.Tracks.Add(track);
+
+                    count++;
+                    if (!string.IsNullOrEmpty(word.SentenceVoice))
+                    {
+                        var playerControls2 =
+                            EnabledPlayerControls.Pause |
+                            (count != 0 ? EnabledPlayerControls.SkipPrevious : 0) |
+                            (count != WordsList.SelectedItems.Count - 1 ? EnabledPlayerControls.SkipNext : 0);
+
+                        PlaylistTrack track2 = new PlaylistTrack
+                        {
+                            Source = word.SentenceVoice,
+                            Title = word.Sentence,
+                            Artist = "College English",
+                            Album = "College English Book",
+                            PlayerControls = playerControls2
+                        };
+                        playlist.Tracks.Add(track2);
+
+                        count++;
+                    }
+
+                    
+                }
+
+
+                // Save it to isolated storage
+                playlist.Save("ColleageEnglishVocaburaryPlaylist.xml");
             }
             BackgroundAudioPlayer.Instance.Play();
             playAppBarButton.IsEnabled = false;
@@ -449,6 +458,21 @@ namespace ColleageEnglishVocaburary
         {
             BackgroundAudioPlayer.Instance.SkipNext();
             nextAppBarButton.IsEnabled = false;
+        }
+
+        private void PlayTimer_Tick(object sender, EventArgs e)
+        {
+            // check for errors
+            string errorString = BackgroundErrorNotifier.GetError();
+            if (errorString != null)
+            {
+                MessageBox.Show(errorString, "Audio error", MessageBoxButton.OK);
+                //progressBar.IsIndeterminate = false;
+            }
+
+         
+
+           
         }
     }
 }

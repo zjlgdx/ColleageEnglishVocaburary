@@ -34,11 +34,6 @@ namespace PlaylistFilePlaybackAgent
         {
             using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                if (storage.FileExists(filename))
-                {
-                    storage.DeleteFile(filename);
-                }
-
                 using (IsolatedStorageFileStream stream = storage.CreateFile(filename))
                 {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Playlist));

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using AudioSharedLibrary;
 using Microsoft.Phone.BackgroundAudio;
 using System.Collections.Generic;
 
@@ -8,6 +10,46 @@ namespace PlaylistFilePlaybackAgent
     {
         static Playlist playlist;
         static int currentTrack = 0;
+
+        private static volatile bool classInitialized;
+
+        /// <remarks>
+        /// AudioPlayer instances can share the same process. 
+        /// Static fields can be used to share state between AudioPlayer instances
+        /// or to communicate with the Audio Streaming agent.
+        /// </remarks>
+        public AudioPlayer()
+        {
+            if (!classInitialized)
+            {
+                classInitialized = true;
+
+                // Subscribe to the managed exception handler
+                Deployment.Current.Dispatcher.BeginInvoke(delegate
+                {
+                    Application.Current.UnhandledException += AudioPlayer_UnhandledException;
+                });
+            }
+        }
+
+        /// Code to execute on Unhandled Exceptions
+        private void AudioPlayer_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                Exception ex = e.ExceptionObject;
+                BackgroundErrorNotifier.AddError(ex);
+            }
+            catch (Exception)
+            {
+            }
+
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                // An unhandled exception has occurred; break into the debugger
+                System.Diagnostics.Debugger.Break();
+            }
+        }
 
         /// <summary>
         /// Called when the playstate changes, except for the Error state (see OnError)
@@ -28,18 +70,59 @@ namespace PlaylistFilePlaybackAgent
                     break;
 
                 case PlayState.TrackEnded:
-                    if (playlist != null && currentTrack < playlist.Tracks.Count - 1)
-                    {
-                        currentTrack += 1;
-                        player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    }
-                    else
-                    {
-                        player.Track = null;
-                    }
+                    //if (playlist != null && currentTrack < playlist.Tracks.Count - 1)
+                    //{
+                    //    currentTrack += 1;
+                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    //}
+                    //else
+                    //{
+                    //    player.Track = null;
+                    //}
+
+                    PlayNextTrack(player);
                     break;
             }
             NotifyComplete();
+        }
+
+        /// <summary>
+        /// Plays the track in our playlist at the currentTrackNumber position.
+        /// </summary>
+        /// <param name="player">The BackgroundAudioPlayer</param>
+        private void PlayTrack(BackgroundAudioPlayer player)
+        {
+            if (PlayState.Paused == player.PlayerState)
+            {
+                // If we're paused, we already have 
+                // the track set, so just resume playing.
+                player.Play();
+            }
+            else
+            {
+                if (playlist == null)
+                {
+                    return;
+                }
+                // Set which track to play. When the TrackReady state is received 
+                // in the OnPlayStateChanged handler, call player.Play().
+                player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+            }
+
+        }
+
+        /// <summary>
+        /// Increments the currentTrackNumber and plays the correpsonding track.
+        /// </summary>
+        /// <param name="player">The BackgroundAudioPlayer</param>
+        private void PlayNextTrack(BackgroundAudioPlayer player)
+        {
+            if (null != playlist && ++currentTrack >= playlist.Tracks.Count)
+            {
+                currentTrack = 0;
+            }
+
+            PlayTrack(player);
         }
 
         /// <summary>
@@ -61,19 +144,29 @@ namespace PlaylistFilePlaybackAgent
             switch (action)
             {
                 case UserAction.Play:
+                    //if (player.Track == null)
+                    //{
+                    //    // Load playlist from isolated storage
+                    //    playlist = Playlist.Load("ColleageEnglishVocaburaryPlaylist.xml");
+
+                    //    currentTrack = 0;
+                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    //}
+                    //else
+                    //{
+                    //    player.Play();
+                    //}
+
                     if (player.Track == null)
                     {
                         // Load playlist from isolated storage
-                        if (playlist == null)
-                            playlist = Playlist.Load("ColleageEnglishVocaburaryPlaylist.xml");
+                        playlist = Playlist.Load("ColleageEnglishVocaburaryPlaylist.xml");
 
                         currentTrack = 0;
-                        player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                        //player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
                     }
-                    else
-                    {
-                        player.Play();
-                    }
+
+                    PlayTrack(player);
                     break;
 
                 case UserAction.Pause:
@@ -81,27 +174,31 @@ namespace PlaylistFilePlaybackAgent
                     break;
 
                 case UserAction.SkipNext:
-                    if (currentTrack < playlist.Tracks.Count - 1)
-                    {
-                        currentTrack += 1;
-                        player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    }
-                    else
-                    {
-                        player.Track = null;
-                    }
+                    //if (currentTrack < playlist.Tracks.Count - 1)
+                    //{
+                    //    currentTrack += 1;
+                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    //}
+                    //else
+                    //{
+                    //    player.Track = null;
+                    //}
+
+                    PlayNextTrack(player);
                     break;
 
                 case UserAction.SkipPrevious:
-                    if (currentTrack > 0)
-                    {
-                        currentTrack -= 1;
-                        player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    }
-                    else
-                    {
-                        player.Track = null;
-                    }
+                    //if (currentTrack > 0)
+                    //{
+                    //    currentTrack -= 1;
+                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    //}
+                    //else
+                    //{
+                    //    player.Track = null;
+                    //}
+
+                    PlayPreviousTrack(player);
                     break;
 
                 case UserAction.Seek:
@@ -109,6 +206,20 @@ namespace PlaylistFilePlaybackAgent
                     break;
             }
             NotifyComplete();
+        }
+
+        /// <summary>
+        /// Decrements the currentTrackNumber and plays the correpsonding track.
+        /// </summary>
+        /// <param name="player">The BackgroundAudioPlayer</param>
+        private void PlayPreviousTrack(BackgroundAudioPlayer player)
+        {
+            if (--currentTrack < 0)
+            {
+                currentTrack = playlist.Tracks.Count - 1;
+            }
+
+            PlayTrack(player);
         }
 
         /// <summary>
@@ -126,9 +237,21 @@ namespace PlaylistFilePlaybackAgent
         {
             base.OnError(player, track, error, isFatal);
 
-            //TODO: Add code to handle error conditions
+            if (isFatal)
+            {
+                BackgroundErrorNotifier.AddError(error);
+                Abort();
+            }
+            else
+            {
+                BackgroundErrorNotifier.AddError(error);
 
-            NotifyComplete();
+                // force the track to stop
+                player.Track = null;
+                NotifyComplete();
+            }    
+
+
         }
 
         /// <summary>
