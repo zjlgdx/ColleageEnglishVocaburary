@@ -165,9 +165,14 @@ namespace ColleageEnglishVocaburary
                     }
 
                     index++;
-
-                    Stream stream = await client.OpenReadTaskAsync(baseUrl + mp3);
-                    await FileStorageOperations.SaveToLocalFolderAsync(mp3Path, stream);
+                    try
+                    {
+                        Stream stream = await client.OpenReadTaskAsync(baseUrl + mp3);
+                        await FileStorageOperations.SaveToLocalFolderAsync(mp3Path, stream);
+                    }
+                    catch (Exception)
+                    {
+                    }
 
 
 
@@ -391,6 +396,7 @@ namespace ColleageEnglishVocaburary
 
         private void OnPlayAppBarButtonClick(object sender, EventArgs e)
         {
+           
             if (WordsList.SelectedItems.Count > 0)
             {
                 // Create playlist
