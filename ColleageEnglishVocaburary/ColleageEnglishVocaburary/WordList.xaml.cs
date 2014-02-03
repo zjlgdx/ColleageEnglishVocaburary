@@ -224,13 +224,14 @@ namespace ColleageEnglishVocaburary
                           )+                          #以上子串出现0次或任意多次
                           (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
                       <\1>                           #结束标记“</tag>”
-                     ");
+                     ((?:(?!</p>)(?!<br>).)*(?=</p>)|(?:(?!<br>).)*(?=<br>))    ");
                 var sentense = regexMeaning.Match(expression);
                 if (sentense.Success)
                 {
                     var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();
                     wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
                     wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
+                    wordParaphrase = wordParaphrase.Replace("&nbsp;&nbsp;e.g.", "e.g.");
                     word.Meaning = wordParaphrase;
                 }
                 else
@@ -257,7 +258,7 @@ namespace ColleageEnglishVocaburary
                         var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();// sentense.Value;
                         wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
                         wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
-                        
+                        wordParaphrase = wordParaphrase.Replace("&nbsp;&nbsp;e.g.", "e.g.");
                         word.Meaning = wordParaphrase;
                     }
                     else
@@ -275,7 +276,7 @@ namespace ColleageEnglishVocaburary
                             var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();// sentense.Value;
                             wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
                             wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
-
+                            wordParaphrase = wordParaphrase.Replace("&nbsp;&nbsp;e.g.", "e.g.");
                             word.Meaning = wordParaphrase;
                         }
                     }
