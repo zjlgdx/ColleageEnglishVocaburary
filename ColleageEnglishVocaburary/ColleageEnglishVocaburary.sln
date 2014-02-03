@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColleageEnglishVocaburary", "ColleageEnglishVocaburary\ColleageEnglishVocaburary.csproj", "{2990F5A7-6D27-4A60-AF2F-CEA8D7BE5CA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleAudioPlaybackAgent", "SimpleAudioPlaybackAgent\SimpleAudioPlaybackAgent.csproj", "{153021CD-7863-4A64-816F-32F72254B495}"

@@ -18,6 +18,7 @@ namespace ColleageEnglishVocaburary
 {
     public partial class CourseList : PhoneApplicationPage
     {
+        private const string COLLEAGE_ENGLISH_VOCABURARY_BOOK = "Colleage_English_Vocaburary_book_{0}";
         private BookViewModel viewModel = null;
 
         /// <summary>
@@ -43,7 +44,12 @@ namespace ColleageEnglishVocaburary
             DataContext = ViewModel;
         }
 
-        private async Task downloadWord(string bookId)
+        /// <summary>
+        /// 下载每册的单元目录
+        /// </summary>
+        /// <param name="bookId"></param>
+        /// <returns></returns>
+        private async Task DownloadWord(string bookId)
         {
             string url = string.Format("http://educenter.fudan.edu.cn/collegeenglish/new/integrated{0}/", bookId);
             var client = new WebClient();
@@ -53,7 +59,22 @@ namespace ColleageEnglishVocaburary
             var courses = new List<Course>();
             string[] hrefList = { "u1-p1-d.htm", "u2-p1-d.htm", "u3-p1-d.htm", "u4-p1-d.htm", "u5-p1-d.htm", "u6-p1-d.htm", "u7-p1-d.htm", "u8-p1-d.htm" };
             var index = 0;
+            /*
+             * 参考：http://blog.csdn.net/lxcnn/article/details/4402808
+             * .NET正则基础之——平衡组
+             * 3.1.3  捕获组
+               这里面主要涉及到了两个捕获组“(?<Open>\()”和“(?<-Open>\))”，而在平衡组的应用中，我是只关心它是否匹配了，而对于匹配到的内容是不关心的。
+             * 对于这样一种需求，可以用以下方式实现
+                \( (?<Open>)
+                \)(?<-Open>)
+               “(?<Open>)”和“(?<-Open>)”这两种方式只是使用了命名捕获组，捕获的是一个位置，它总是能够匹配成功的，而匹配的内容是空的，分配的内存空间是固定的，
+             * 可以有效的节省资源，这在单字符嵌套结构中并不明显，但是在字符序列嵌套结构中就比较明显了。
+             * 由于捕获组是直接跟在开始或结束标记之后的，所以只要开始或结束标记匹配成功，命名捕获组自然就会匹配成功，对于功能是没有任何影响的。
+             * 备注：由于是匹配link标签，所以完全可以使用如下表达式：@"<(a)(?:(?!\bhref\b)[^<>])*href=([""']?){0}\2[^>]*>(?>(?:(?!</?\1).)*)</\1>"。
+             * 代码中的表达式只是更通用，并不仅限于a锚点标签。
+             */
             string pattern = @"<([a-z]+)(?:(?!\bhref\b)[^<>])*href=([""']?){0}\2[^>]*>(?><\1[^>]*>(?<o>)|</\1>(?<-o>)|(?:(?!</?\1).)*)*(?(o)(?!))</\1>";
+
             foreach (string href in hrefList)
             {
                 Match match = Regex.Match(response, string.Format(pattern, Regex.Escape(href)),
@@ -61,11 +82,11 @@ namespace ColleageEnglishVocaburary
 
                 if (match.Success)
                 {
-                    var regexhref = Regex.Match(match.Value, "(?<=src=\")images/home_\\d+.(gif|jpg)");
-                    if (regexhref.Success)
+                    var regexHref = Regex.Match(match.Value, "(?<=src=\")images/home_\\d+.(gif|jpg)");
+                    if (regexHref.Success)
                     {
-                        ViewModel.DownloadingItem = "Downloading unit :" + regexhref.Value;
-                        var image = regexhref.Value;
+                        ViewModel.DownloadingStatus = "Downloading unit : " + regexHref.Value;
+                        var image = regexHref.Value;
                         var imageUrl = url + image;
                         var imagePath = (bookId + image).Replace("/", "_");
                         courses.Add(new Course { Id = string.Format("{0}/0{1}p2newword1.htm", bookId, ++index), CourseName = imagePath, CourseImage = imagePath });
@@ -74,25 +95,22 @@ namespace ColleageEnglishVocaburary
                         await FileStorageOperations.SaveToLocalFolderAsync(imagePath, stream);
                     }
                 }
-
-
             }
             book.Courses = courses;
-            await MyDataSerializer<Book>.SaveObjectsAsync(book, "Colleage_English_Vocaburary_book_" + bookId);
-            ViewModel.DownloadingItem = "DONE!";
+            await MyDataSerializer<Book>.SaveObjectsAsync(book, string.Format(COLLEAGE_ENGLISH_VOCABURARY_BOOK, bookId));
+            ViewModel.DownloadingStatus = "DONE!";
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             string bookId = NavigationContext.QueryString["bookId"];
 
-            ViewModel.Id = "Colleage_English_Vocaburary_book_" + bookId;
+            ViewModel.BookId = string.Format(COLLEAGE_ENGLISH_VOCABURARY_BOOK, bookId);
             using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                if (!storage.FileExists(ViewModel.Id))
+                if (!storage.FileExists(ViewModel.BookId))
                 {
-
-                    await downloadWord(bookId);
+                    await DownloadWord(bookId);
                 }
             }
 

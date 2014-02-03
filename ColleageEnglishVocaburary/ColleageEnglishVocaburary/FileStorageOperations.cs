@@ -98,10 +98,6 @@ namespace CaptainsLog
                        
                     }
                 }
-
-
-            
-            
         }
 
         /// <summary>

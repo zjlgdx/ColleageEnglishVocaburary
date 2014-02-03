@@ -2,12 +2,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.IO.IsolatedStorage;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
 namespace ColleageEnglishVocaburary.ViewModels
 {
@@ -25,7 +21,7 @@ namespace ColleageEnglishVocaburary.ViewModels
                 return;
             }
 
-            Book book = await MyDataSerializer<Book>.RestoreObjectsAsync(this.Id);
+            Book book = await MyDataSerializer<Book>.RestoreObjectsAsync(this.BookId);
             this.BookName = book.BookName;
 
             foreach (var course in book.Courses)
@@ -39,12 +35,12 @@ namespace ColleageEnglishVocaburary.ViewModels
             }
         }
 
-        private string _id;
+        private string _bookId;
 
-        public string Id
+        public string BookId
         {
-            get { return _id; }
-            set { this.SetProperty(ref this._id, value); }
+            get { return _bookId; }
+            set { this.SetProperty(ref this._bookId, value); }
         }
 
         public string _bookName;
@@ -55,12 +51,12 @@ namespace ColleageEnglishVocaburary.ViewModels
             set { this.SetProperty(ref this._bookName, value); }
         }
 
-        private string _downloadingItem;
+        private string _downloadingStatus;
 
-        public string DownloadingItem
+        public string DownloadingStatus
         {
-            get { return _downloadingItem; }
-            set { this.SetProperty(ref this._downloadingItem, value); }
+            get { return _downloadingStatus; }
+            set { this.SetProperty(ref this._downloadingStatus, value); }
         }
 
         public ObservableCollection<CourseViewModel> Courses { get; private set; }
@@ -83,45 +79,6 @@ namespace ColleageEnglishVocaburary.ViewModels
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class IsoImageConverter : IValueConverter
-    {
-        //Convert Data to Image when Loading Data
-        public object Convert(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            var bitmap = new BitmapImage();
-            try
-            {
-                var path = (string)value;
-                if (!String.IsNullOrEmpty(path))
-                {
-                    using (var file = LoadFile(path))
-                    {
-                        bitmap.SetSource(file);
-                    }
-                }
-            }
-            catch
-            {
-            }
-            return bitmap;
-        }
-
-        private Stream LoadFile(string file)
-        {
-            using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
-            {
-                return isoStore.OpenFile(file, FileMode.Open, FileAccess.Read);
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

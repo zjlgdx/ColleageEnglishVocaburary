@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="ViewModels\BookViewModel.cs" />
     <Compile Include="ViewModels\CourseViewModel.cs" />
+    <Compile Include="ViewModels\IsoImageConverter.cs" />
     <Compile Include="ViewModels\WordViewModel.cs" />
     <Compile Include="WebClientExtensions\EAPCommon.cs" />
     <Compile Include="WebClientExtensions\HttpClient.cs" />
