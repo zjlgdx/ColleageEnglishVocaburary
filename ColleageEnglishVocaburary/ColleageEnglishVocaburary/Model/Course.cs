@@ -4,7 +4,7 @@ namespace ColleageEnglishVocaburary.Model
 {
     public class Course
     {
-        public string Id { get; set; }
+        public string CourseId { get; set; }
         public string CourseName { get; set; }
         public string CourseImage { get; set; }
         public List<NewWord> NewWords { get; set; }

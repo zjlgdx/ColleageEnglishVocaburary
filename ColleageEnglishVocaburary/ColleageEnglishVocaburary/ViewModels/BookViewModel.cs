@@ -28,7 +28,7 @@ namespace ColleageEnglishVocaburary.ViewModels
             {
                 this.Courses.Add(new CourseViewModel
                 {
-                    Id = course.Id,
+                    CourseId = course.CourseId,
                     CourseName = course.CourseName,
                     CourseImage = course.CourseImage
                 });

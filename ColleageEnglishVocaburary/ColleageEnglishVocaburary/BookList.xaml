@@ -12,13 +12,11 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="False">
-
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
-        <phone:Panorama Title="大学英语综合教程">
-
+        <phone:Panorama Title="大学英语综合教程" TitleTemplate="{StaticResource SmallPanoramaTitle}">
             <!--Panorama item one-->
-            <phone:PanoramaItem Header="书本列表" Orientation="Horizontal">
+            <phone:PanoramaItem Header="书本目录" Orientation="Horizontal" HeaderTemplate="{StaticResource TinyPanoramaHeader}">
                 <Grid>
                     <StackPanel Margin="0,4,16,0" Orientation="Vertical" VerticalAlignment="Top">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -40,9 +38,6 @@
                     </StackPanel>
                 </Grid>
             </phone:PanoramaItem>
-
-            
         </phone:Panorama>
     </Grid>
-
 </phone:PhoneApplicationPage>

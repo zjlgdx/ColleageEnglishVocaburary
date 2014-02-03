@@ -80,10 +80,10 @@ namespace ColleageEnglishVocaburary
             playTimer.Start();
 
             string courseId = NavigationContext.QueryString["courseId"];
-            ViewModel.Id = courseId.Replace("/", "_");
+            ViewModel.CourseId = courseId.Replace("/", "_");
             using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                if (!storage.FileExists(ViewModel.Id))
+                if (!storage.FileExists(ViewModel.CourseId))
                 {
 
                     await downloadWord(courseId);
@@ -107,7 +107,7 @@ namespace ColleageEnglishVocaburary
             string response = await client.DownloadStringTaskAsync(new Uri(url));
             //xmld
             var course = new Course();
-            course.Id = courseId;
+            course.CourseId = courseId;
             course.CourseName = courseId;
             var newWords = new List<NewWord>();
 
@@ -255,7 +255,7 @@ namespace ColleageEnglishVocaburary
             course.NewWords = newWords;
 
 
-            await MyDataSerializer<Course>.SaveObjectsAsync(course, ViewModel.Id);
+            await MyDataSerializer<Course>.SaveObjectsAsync(course, ViewModel.CourseId);
 
 
 

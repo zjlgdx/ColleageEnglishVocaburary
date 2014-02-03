@@ -21,7 +21,7 @@ namespace ColleageEnglishVocaburary.ViewModels
                 return;
             }
 
-            Course course = await MyDataSerializer<Course>.RestoreObjectsAsync(this.Id);
+            Course course = await MyDataSerializer<Course>.RestoreObjectsAsync(this.CourseId);
             this.CourseName = course.CourseName;
 
             foreach (var word in course.NewWords)
@@ -38,11 +38,11 @@ namespace ColleageEnglishVocaburary.ViewModels
             }
         }
 
-        private string _id;
-        public string Id
+        private string _courseId;
+        public string CourseId
         {
-            get { return _id; }
-            set { this.SetProperty(ref this._id, value); }
+            get { return _courseId; }
+            set { this.SetProperty(ref this._courseId, value); }
         }
 
         private string _courseName;
