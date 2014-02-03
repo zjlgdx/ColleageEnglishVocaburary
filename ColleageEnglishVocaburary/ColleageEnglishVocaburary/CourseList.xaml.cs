@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
-using CaptainsLog;
+﻿using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
 using ColleageEnglishVocaburary.ViewModels;
@@ -13,10 +10,10 @@ using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
-using System.ComponentModel;
 
 namespace ColleageEnglishVocaburary
 {
