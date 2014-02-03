@@ -137,4 +137,7 @@
   <data name="COLLEGE_ENGLISH_ONLINE_BOOK_URL" xml:space="preserve">
     <value>http://educenter.fudan.edu.cn/collegeenglish/new/integrated{0}/</value>
   </data>
+  <data name="COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL" xml:space="preserve">
+    <value>http://educenter.fudan.edu.cn/collegeenglish/new/integrated</value>
+  </data>
 </root>

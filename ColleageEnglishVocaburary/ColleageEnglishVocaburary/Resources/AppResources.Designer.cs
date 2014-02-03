@@ -88,6 +88,15 @@ namespace ColleageEnglishVocaburary.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to http://educenter.fudan.edu.cn/collegeenglish/new/integrated.
+        /// </summary>
+        public static string COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL {
+            get {
+                return ResourceManager.GetString("COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://educenter.fudan.edu.cn/collegeenglish/new/integrated{0}/.
         /// </summary>
         public static string COLLEGE_ENGLISH_ONLINE_BOOK_URL {

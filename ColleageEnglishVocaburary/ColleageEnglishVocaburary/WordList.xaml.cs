@@ -68,10 +68,6 @@ namespace ColleageEnglishVocaburary
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            // Close the background audio player in case it 
-            // was running from a previous debugging session.
-            BackgroundAudioPlayer.Instance.Close();
-
             // Set PlayStateChanged handler
             BackgroundAudioPlayer.Instance.PlayStateChanged += OnBackgroundAudioPlayerPlayStateChanged;
 
@@ -84,26 +80,30 @@ namespace ColleageEnglishVocaburary
             {
                 if (!storage.FileExists(ViewModel.CourseId))
                 {
-
+                    downloadListStatus.Visibility = Visibility.Visible;
+                    wordListItem.Visibility = Visibility.Collapsed;
+                    progressBar1.Value = 0;
                     await DownloadWord(courseId);
                 }
             }
 
             await ViewModel.LoadData();
-
+            downloadListStatus.Visibility = Visibility.Collapsed;
+            wordListItem.Visibility = Visibility.Visible;
             base.OnNavigatedTo(e);
         }
 
         private async Task DownloadWord(string courseId)
         {
             var bookId = courseId.Substring(0, 2);
-            string bookUrl = string.Format(AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_URL, bookId); //"http://educenter.fudan.edu.cn/collegeenglish/new/integrated" + bookId;
-            string courseUrl = string.Format(AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_URL, courseId); //"http://educenter.fudan.edu.cn/collegeenglish/new/integrated" + courseId;
+            string bookUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + bookId; 
+            string courseUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + courseId; 
 
             var client = new WebClient { Encoding = DBCSCodePage.DBCSEncoding.GetDBCSEncoding("gb2312") };
             string response = await client.DownloadStringTaskAsync(new Uri(courseUrl));
-   
-            var course = new Course { CourseId = courseId, CourseName = courseId };
+
+            var courseName = GetCourseName(courseId);
+            var course = new Course { CourseId = courseId, CourseName = courseName };
             var newWords = new List<NewWord>();
 
             // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
@@ -133,6 +133,9 @@ namespace ColleageEnglishVocaburary
                         \)                          #普通闭括弧
                        ", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Singleline);
             var wordId = 0;
+            //double totalCount = mc.Count;
+            //progressBar1.Maximum = totalCount;
+            progressBar1.LargeChange = 0.6d;
             foreach (Match m in mc)
             {
                 var expression = m.Value;
@@ -241,6 +244,8 @@ namespace ColleageEnglishVocaburary
                     word.Sentence = fullsentense;
                 }
                 newWords.Add(word);
+
+                progressBar1.Value += progressBar1.LargeChange;
             }
 
             course.NewWords = newWords;
@@ -465,9 +470,65 @@ namespace ColleageEnglishVocaburary
                 //progressBar.IsIndeterminate = false;
             }
 
-         
+        }
 
-           
+        private string GetCourseName(string courseId)
+        {
+            var bookId = courseId.Substring(0, 1);
+            var bookName = string.Empty;
+            var unitId = courseId.Substring(2, 2);
+            var unitName = string.Empty;
+            switch (bookId)
+            {
+                case "1":
+                    bookName = "第一册";
+                    break;
+                case "2":
+                    bookName= "第二册";
+                    break;
+                case "3":
+                    bookName= "第三册";
+                    break;
+                case "4":
+                    bookName= "第四册";
+                    break;
+                default:
+                    bookName= "Unknown";
+                    break;
+            }
+
+            switch (unitId)
+            {
+                case "01":
+                    unitName = "Unit One";
+                    break;
+                case "02":
+                    unitName = "Unit Two";
+                    break;
+                case "03":
+                   unitName = "Unit Three";
+                    break;
+                case "04":
+                    unitName = "Unit Four";
+                    break;
+                case "05":
+                    unitName = "Unit Five";
+                    break;
+                case "06":
+                    unitName = "Unit Six";
+                    break;
+                case "07":
+                    unitName = "Unit Seven";
+                    break;
+                case "08":
+                    unitName = "Unit Eight";
+                    break;
+                default:
+                    unitName = "Unknown";
+                    break;
+            }
+
+            return string.Format("{0} {1}", bookName, unitName);
         }
     }
 }

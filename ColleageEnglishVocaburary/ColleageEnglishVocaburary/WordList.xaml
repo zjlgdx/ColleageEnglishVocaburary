@@ -64,10 +64,10 @@
     </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
-        <phone:Panorama Title="大学英语综合教程">
+        <phone:Panorama Title="大学英语综合教程" TitleTemplate="{StaticResource SmallPanoramaTitle}">
 
             <!--Panorama item one-->
-            <phone:PanoramaItem Header="{Binding CourseName}">
+            <phone:PanoramaItem Name="wordListItem" Header="{Binding CourseName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Collapsed">
                 <toolkit:LongListMultiSelector x:Name="WordsList" 
                                                 Margin="0,-38,-22,2"
                                                 ItemsSource="{Binding Words}"
@@ -78,14 +78,14 @@
             </phone:PanoramaItem>
 
             <!--Panorama item two-->
-            <phone:PanoramaItem Header="Download Status">
+            <phone:PanoramaItem Name="downloadListStatus" Header="下载状态" HeaderTemplate="{StaticResource CoursePanoramaHeader}" Visibility="Collapsed">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
-                    <TextBlock Text="{Binding DownloadingStatus}" Grid.Row="0"></TextBlock>
+                    <ProgressBar Name="progressBar1" Grid.Row="0" Value="0" IsIndeterminate="False" Height="50"></ProgressBar>
+                    <TextBlock Text="{Binding DownloadingStatus}" Grid.Row="1"></TextBlock>
                 </Grid>
             </phone:PanoramaItem>
         </phone:Panorama>
