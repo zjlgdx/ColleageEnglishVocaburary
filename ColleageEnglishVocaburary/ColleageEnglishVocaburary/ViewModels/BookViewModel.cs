@@ -1,4 +1,5 @@
-﻿using ColleageEnglishVocaburary.Model;
+﻿using System.Windows;
+using ColleageEnglishVocaburary.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -56,7 +57,10 @@ namespace ColleageEnglishVocaburary.ViewModels
         public string DownloadingStatus
         {
             get { return _downloadingStatus; }
-            set { this.SetProperty(ref this._downloadingStatus, value); }
+            set
+            {
+                this.SetProperty(ref this._downloadingStatus, value);
+            }
         }
 
         public ObservableCollection<CourseViewModel> Courses { get; private set; }

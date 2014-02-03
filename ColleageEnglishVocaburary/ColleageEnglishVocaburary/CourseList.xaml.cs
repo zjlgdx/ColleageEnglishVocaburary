@@ -1,4 +1,7 @@
-﻿using CaptainsLog;
+﻿using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
+using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
 using ColleageEnglishVocaburary.ViewModels;
@@ -13,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
+using System.ComponentModel;
 
 namespace ColleageEnglishVocaburary
 {
@@ -37,6 +41,8 @@ namespace ColleageEnglishVocaburary
         /// </summary>
         private const string COURSE_HYPER_LINK_PATTERN = @"<([a-z]+)(?:(?!\bhref\b)[^<>])*href=([""']?){0}\2[^>]*>(?><\1[^>]*>(?<o>)|</\1>(?<-o>)|(?:(?!</?\1).)*)*(?(o)(?!))</\1>";
         private BookViewModel viewModel = null;
+
+        //DispatcherTimer timer = new DispatcherTimer();
 
         /// <summary>
         /// A static ViewModel used by the views to bind against.
@@ -72,6 +78,16 @@ namespace ColleageEnglishVocaburary
             book.BookName = GetBookName(bookId);
             var courses = new List<Course>();
             string[] hrefList = { "u1-p1-d.htm", "u2-p1-d.htm", "u3-p1-d.htm", "u4-p1-d.htm", "u5-p1-d.htm", "u6-p1-d.htm", "u7-p1-d.htm", "u8-p1-d.htm" };
+            var courseMapping = new Dictionary<string, string> { 
+                { "u1-p1-d.htm", "Unit One" }, 
+                { "u2-p1-d.htm", "Unit Two" }, 
+                { "u3-p1-d.htm", "Unit Three" }, 
+                { "u4-p1-d.htm", "Unit Four" }, 
+                { "u5-p1-d.htm", "Unit Five" }, 
+                { "u6-p1-d.htm", "Unit Six" } ,
+                { "u7-p1-d.htm", "Unit Seven" },
+                { "u8-p1-d.htm", "Unit Eight" } 
+            };
             var index = 0;
 
             foreach (string href in hrefList)
@@ -84,7 +100,7 @@ namespace ColleageEnglishVocaburary
                     var regexHref = Regex.Match(match.Value, "(?<=src=\")images/home_\\d+.(gif|jpg)");
                     if (regexHref.Success)
                     {
-                        ViewModel.DownloadingStatus = "Downloading unit : " + regexHref.Value;
+                        ViewModel.DownloadingStatus = "Downloading unit : " + courseMapping[href];
                         var image = regexHref.Value;
                         var imageUrl = url + image;
                         var imagePath = (bookId + image).Replace("/", "_");
@@ -92,13 +108,15 @@ namespace ColleageEnglishVocaburary
 
                         Stream stream = await client.OpenReadTaskAsync(imageUrl);
                         await FileStorageOperations.SaveToLocalFolderAsync(imagePath, stream);
+
+                        progressBar1.Value += progressBar1.LargeChange;
                     }
                 }
             }
 
             book.Courses = courses;
             await MyDataSerializer<Book>.SaveObjectsAsync(book, string.Format(COLLEAGE_ENGLISH_VOCABURARY_BOOK_ID, bookId));
-            ViewModel.DownloadingStatus = "DONE!";
+            ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE;
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -110,12 +128,16 @@ namespace ColleageEnglishVocaburary
             {
                 if (!storage.FileExists(ViewModel.BookId))
                 {
+                    downloadListStatus.Visibility = Visibility.Visible;
+                    CourseListItem.Visibility = Visibility.Collapsed;
+                    progressBar1.Value = 0;
                     await DownloadCourseUnit(bookId);
                 }
             }
 
             await ViewModel.LoadData();
-
+            downloadListStatus.Visibility = Visibility.Collapsed;
+            CourseListItem.Visibility = Visibility.Visible;
             base.OnNavigatedTo(e);
         }
 

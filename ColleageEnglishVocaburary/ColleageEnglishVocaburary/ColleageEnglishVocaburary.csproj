@@ -96,6 +96,7 @@
     <Compile Include="BookList.xaml.cs">
       <DependentUpon>BookList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Constants.cs" />
     <Compile Include="CourseList.xaml.cs">
       <DependentUpon>CourseList.xaml</DependentUpon>
     </Compile>

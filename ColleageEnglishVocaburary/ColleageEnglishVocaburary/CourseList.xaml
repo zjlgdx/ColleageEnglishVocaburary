@@ -18,7 +18,7 @@
         <phone:Panorama Title="课程目录" TitleTemplate="{StaticResource SmallPanoramaTitle}">
             
             <!--Panorama item one-->
-            <phone:PanoramaItem Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}">
+            <phone:PanoramaItem Name="CourseListItem" Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Collapsed">
                 
                 <phone:LongListSelector Margin="0,-38,-22,2" ItemsSource="{Binding Courses}">
                     
@@ -39,16 +39,16 @@
             </phone:PanoramaItem>
 
             <!--Panorama item two-->
-            <!--<phone:PanoramaItem Header="Download Status">
+            <phone:PanoramaItem Name="downloadListStatus" Header="下载状态" HeaderTemplate="{StaticResource CoursePanoramaHeader}" Visibility="Collapsed">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
-                    <TextBlock Text="{Binding DownloadingItem}" Grid.Row="0"></TextBlock>
+                    <ProgressBar Name="progressBar1" Grid.Row="0" Value="0" IsIndeterminate="False" Height="50" Maximum="8" LargeChange="1"></ProgressBar>
+                    <TextBlock Text="{Binding DownloadingStatus}" Grid.Row="1"></TextBlock>
                 </Grid>
-            </phone:PanoramaItem>-->
+            </phone:PanoramaItem>
         </phone:Panorama>
     </Grid>
 
