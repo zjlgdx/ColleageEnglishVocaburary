@@ -260,6 +260,25 @@ namespace ColleageEnglishVocaburary
                         
                         word.Meaning = wordParaphrase;
                     }
+                    else
+                    {
+                        regexMeaning = new Regex(@"(?isx)
+                       <(br)\b[^>]*>                   #开始标记“<tag...>”
+                        
+                       (?:(?!</p>).)* (?=</p>)                         
+                     ");
+
+                        sentense = regexMeaning.Match(expression);
+
+                        if (sentense.Success)
+                        {
+                            var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();// sentense.Value;
+                            wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
+                            wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
+
+                            word.Meaning = wordParaphrase;
+                        }
+                    }
                 }
 
                 // full sentense

@@ -67,7 +67,7 @@
         <phone:Panorama Title="大学英语综合教程" TitleTemplate="{StaticResource SmallPanoramaTitle}">
 
             <!--Panorama item one-->
-            <phone:PanoramaItem Name="wordListItem" Header="{Binding CourseName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Collapsed">
+            <phone:PanoramaItem Name="wordListItem" Header="{Binding CourseName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Visible">
                 <toolkit:LongListMultiSelector x:Name="WordsList" 
                                                 Margin="0,-38,-22,2"
                                                 ItemsSource="{Binding Words}"

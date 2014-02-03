@@ -18,7 +18,7 @@
         <phone:Panorama Title="课程目录" TitleTemplate="{StaticResource SmallPanoramaTitle}">
             
             <!--Panorama item one-->
-            <phone:PanoramaItem Name="CourseListItem" Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Collapsed">
+            <phone:PanoramaItem Name="CourseListItem" Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Visible">
                 
                 <phone:LongListSelector Margin="0,-38,-22,2" ItemsSource="{Binding Courses}">
                     
