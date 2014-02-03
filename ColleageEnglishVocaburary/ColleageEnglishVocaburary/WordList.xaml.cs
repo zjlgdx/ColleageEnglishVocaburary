@@ -114,24 +114,25 @@ namespace ColleageEnglishVocaburary
                           |                           #分支结构
                               </p>  (?<-Open>)      #狭义平衡组，遇到结束标记，出栈，Open计数减1
                           |                           #分支结构
-                              <a\s+name=""nw\d+""\s*></a>(?:(?!</?p\b).)*      #右侧紧接着<a name=""nw2""></a>，之后右侧不为开始或结束标记的任意字符
-                          )*                          #以上子串出现0次或任意多次
+                              <a\s+name=""nw\d+""\s*></a>(?:(?!</?p\b).)+      #右侧紧接着<a name=""nw2""></a>，之后右侧不为开始或结束标记的任意字符
+                          )+                          #以上子串出现0次或任意多次
                           (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
                       </p>                          #结束标记“</p>”
-                      ", RegexOptions.Compiled | RegexOptions.Singleline);
+                      ");
             var mc = regexParagraph.Matches(response);
 
-            var regexMedia = new Regex(@"\(                         #普通字符“(”
+            var regexMedia = new Regex(@"(?isx)
+                            \(                         #普通字符“(”
                             (?>                     #分组构造，用来限定量词“*”修饰范围
                                 [^()]+              #非括弧的其它任意字符
                             |                       #分支结构
                                 \(  (?<Open>)       #命名捕获组，遇到开括弧Open计数加1
                             |                       #分支结构
                                 \)  (?<-Open>)      #狭义平衡组，遇到闭括弧Open计数减1
-                            )*                      #以上子串出现0次或任意多次
+                            )+                      #以上子串出现0次或任意多次
                             (?(Open)(?!))           #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
                         \)                          #普通闭括弧
-                       ", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Singleline);
+                       ");
             var wordId = 0;
             //double totalCount = mc.Count;
             //progressBar1.Maximum = totalCount;
@@ -186,13 +187,13 @@ namespace ColleageEnglishVocaburary
                           |                           #分支结构
                               </\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
                           |                           #分支结构
-                              (?:(?!</?\1\b).)*       #右侧不为开始或结束标记的任意字符
-                          )*                          #以上子串出现0次或任意多次
+                              (?:(?!</?\1\b).)+       #右侧不为开始或结束标记的任意字符
+                          )+                          #以上子串出现0次或任意多次
                           (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
                       </\1>                           #结束标记“</tag>”
                      ";
                 //pattern = @"(?<=<font\s+color=""#3366cc""\s*>)[^<]+(?=</font>)";
-                var regexWord = new Regex(pattern, RegexOptions.Compiled | RegexOptions.Singleline);
+                var regexWord = new Regex(pattern);
 
 
 
@@ -206,7 +207,7 @@ namespace ColleageEnglishVocaburary
                     wordParaphrase = Regex.Replace(wordParaphrase, @"<[^>]+>", "");
                     word.Word = wordParaphrase;
 
-                    ViewModel.DownloadingStatus = "downloading " + wordParaphrase;
+                    ViewModel.DownloadingStatus = "Downloading word : " + wordParaphrase;
                 }
 
                 // sentense 句子
@@ -219,17 +220,46 @@ namespace ColleageEnglishVocaburary
                           |                           #分支结构
                               <\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
                           |                           #分支结构
-                              (?:(?!<\1\b).)*       #右侧不为开始或结束标记的任意字符
-                          )*                          #以上子串出现0次或任意多次
+                              (?:(?!<\1\b).)+       #右侧不为开始或结束标记的任意字符
+                          )+                          #以上子串出现0次或任意多次
                           (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
                       <\1>                           #结束标记“</tag>”
-                     ", RegexOptions.Compiled | RegexOptions.Singleline);
+                     ");
                 var sentense = regexMeaning.Match(expression);
                 if (sentense.Success)
                 {
                     var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();
                     wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
+                    wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
                     word.Meaning = wordParaphrase;
+                }
+                else
+                {
+                    // todo
+                    regexMeaning = new Regex(@"(?isx)
+                      <(i)\b[^>]*>                 #开始标记“<tag...>”
+                          (?>                         #分组构造，用来限定量词“*”修饰范围
+                              <\1[^>]*>  (?<Open>)    #命名捕获组，遇到开始标记，入栈，Open计数加1
+                          |                           #分支结构
+                              </\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
+                          |                           #分支结构
+                              (?:(?!</?\1\b).)+       #右侧不为开始或结束标记的任意字符
+                          )+                          #以上子串出现0次或任意多次
+                          (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
+                         </\1>                         #结束标记“</tag>”
+                       (?:(?!</p>).)*                          
+                     ");
+
+                    sentense = regexMeaning.Match(expression);
+
+                    if (sentense.Success)
+                    {
+                        var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();// sentense.Value;
+                        wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
+                        wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
+                        
+                        word.Meaning = wordParaphrase;
+                    }
                 }
 
                 // full sentense
@@ -241,6 +271,7 @@ namespace ColleageEnglishVocaburary
                     var fullsentense = regexMark.Replace(fullsentenseMatch.Value, "");
                     fullsentense = fullsentense.Replace("&nbsp;&nbsp;e.g.", "e.g.");
                     fullsentense = Regex.Replace(fullsentense, "\\s+", " ");
+                    fullsentense = Regex.Replace(fullsentense, "&nbsp;$", "");
                     word.Sentence = fullsentense;
                 }
                 newWords.Add(word);

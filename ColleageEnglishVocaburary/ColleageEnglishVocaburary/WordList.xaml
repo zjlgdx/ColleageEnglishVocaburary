@@ -55,7 +55,7 @@
                         <TextBlock Text="{Binding Word}" Tap="Word_OnTap" Tag="{Binding WordVoice}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
                     </Border>
                     <TextBlock Text="{Binding Meaning}" TextWrapping="Wrap" Margin="10,-2,10,0" Style="{StaticResource PhoneTextLargeStyle}" />
-                    <Border BorderThickness="2" BorderBrush="LightSlateGray">
+                    <Border BorderThickness="2" BorderBrush="LightSlateGray" Visibility="{Binding Sentence, Converter={StaticResource EmptyOrNullConverter}}">
                         <TextBlock Text="{Binding Sentence}" Tap="Sentence_OnTap" Tag="{Binding SentenceVoice}" TextWrapping="Wrap" Margin="10,-2,10,0" Style="{StaticResource PhoneTextLargeStyle}" />
                     </Border>
                 </StackPanel>

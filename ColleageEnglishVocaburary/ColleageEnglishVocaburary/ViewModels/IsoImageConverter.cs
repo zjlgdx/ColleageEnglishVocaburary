@@ -1,11 +1,30 @@
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace ColleageEnglishVocaburary.ViewModels
 {
+    public class EmptyOrNullConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value == null || value.ToString().Equals(""))
+            {
+                return Visibility.Collapsed;
+            }
+
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class IsoImageConverter : IValueConverter
     {
         //Convert Data to Image when Loading Data
