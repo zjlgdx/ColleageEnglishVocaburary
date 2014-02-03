@@ -33,6 +33,12 @@
                 <TextBlock Text="{Binding}" FontSize="25" Margin="0,20,0,-30"/>
             </ContentPresenter>
         </DataTemplate>
+
+        <DataTemplate x:Key="CoursePanoramaHeader">
+            <ContentPresenter>
+                <TextBlock Text="{Binding}" FontSize="25" Margin="0,20,0,0"/>
+            </ContentPresenter>
+        </DataTemplate>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

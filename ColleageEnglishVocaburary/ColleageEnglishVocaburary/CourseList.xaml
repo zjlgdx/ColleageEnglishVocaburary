@@ -16,9 +16,9 @@
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
         <phone:Panorama Title="课程目录" TitleTemplate="{StaticResource SmallPanoramaTitle}">
-
+            
             <!--Panorama item one-->
-            <phone:PanoramaItem Header="{Binding BookName}">
+            <phone:PanoramaItem Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}">
                 
                 <phone:LongListSelector Margin="0,-38,-22,2" ItemsSource="{Binding Courses}">
                     

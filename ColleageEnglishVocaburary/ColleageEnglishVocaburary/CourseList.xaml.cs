@@ -63,12 +63,13 @@ namespace ColleageEnglishVocaburary
         /// </summary>
         /// <param name="bookId"></param>
         /// <returns></returns>
-        private async Task DownloadWord(string bookId)
+        private async Task DownloadCourseUnit(string bookId)
         {
             string url = string.Format(AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_URL, bookId);
             var client = new WebClient { Encoding = DBCSCodePage.DBCSEncoding.GetDBCSEncoding("gb2312") };
             string response = await client.DownloadStringTaskAsync(new Uri(url));
             var book = new Book();
+            book.BookName = GetBookName(bookId);
             var courses = new List<Course>();
             string[] hrefList = { "u1-p1-d.htm", "u2-p1-d.htm", "u3-p1-d.htm", "u4-p1-d.htm", "u5-p1-d.htm", "u6-p1-d.htm", "u7-p1-d.htm", "u8-p1-d.htm" };
             var index = 0;
@@ -109,7 +110,7 @@ namespace ColleageEnglishVocaburary
             {
                 if (!storage.FileExists(ViewModel.BookId))
                 {
-                    await DownloadWord(bookId);
+                    await DownloadCourseUnit(bookId);
                 }
             }
 
@@ -122,6 +123,23 @@ namespace ColleageEnglishVocaburary
         {
             var ui = sender as Image;
             NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + (string)ui.Tag, UriKind.Relative));
+        }
+
+        private string GetBookName(string bookId)
+        {
+            switch (bookId)
+            {
+                case "1":
+                    return "第一册";
+                case "2":
+                    return "第二册";
+                case "3":
+                    return "第三册";
+                case "4":
+                    return "第四册";
+                default:
+                    return "Unknown";
+            }
         }
     }
 }
