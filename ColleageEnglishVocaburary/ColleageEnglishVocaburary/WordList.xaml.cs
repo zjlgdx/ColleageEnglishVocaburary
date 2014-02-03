@@ -213,77 +213,19 @@ namespace ColleageEnglishVocaburary
                 // sentense 句子
                 //<br>
 
-                var regexMeaning = new Regex(@"(?isx)
-                      <(br)\b[^>]*>                 #开始标记“<tag...>”
-                          (?>                         #分组构造，用来限定量词“*”修饰范围
-                              <\1[^>]*>  (?<Open>)    #命名捕获组，遇到开始标记，入栈，Open计数加1
-                          |                           #分支结构
-                              <\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
-                          |                           #分支结构
-                              (?:(?!<\1\b).)+       #右侧不为开始或结束标记的任意字符
-                          )+                          #以上子串出现0次或任意多次
-                          (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
-                      <\1>                           #结束标记“</tag>”
-                     ((?:(?!</p>)(?!<br>).)*(?=</p>)|(?:(?!<br>).)*(?=<br>))    ");
+                var regexMeaning = new Regex(@"(?is)<(br)\b[^>]*>((?!<font\s+color=""#336600""\s*>).)*");
                 var sentense = regexMeaning.Match(expression);
                 if (sentense.Success)
                 {
                     var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();
                     wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
                     wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
-                    wordParaphrase = wordParaphrase.Replace("&nbsp;&nbsp;e.g.", "e.g.");
                     word.Meaning = wordParaphrase;
                 }
-                else
-                {
-                    // todo
-                    regexMeaning = new Regex(@"(?isx)
-                      <(i)\b[^>]*>                 #开始标记“<tag...>”
-                          (?>                         #分组构造，用来限定量词“*”修饰范围
-                              <\1[^>]*>  (?<Open>)    #命名捕获组，遇到开始标记，入栈，Open计数加1
-                          |                           #分支结构
-                              </\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
-                          |                           #分支结构
-                              (?:(?!</?\1\b).)+       #右侧不为开始或结束标记的任意字符
-                          )+                          #以上子串出现0次或任意多次
-                          (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
-                         </\1>                         #结束标记“</tag>”
-                       (?:(?!</p>).)*                          
-                     ");
-
-                    sentense = regexMeaning.Match(expression);
-
-                    if (sentense.Success)
-                    {
-                        var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();// sentense.Value;
-                        wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
-                        wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
-                        wordParaphrase = wordParaphrase.Replace("&nbsp;&nbsp;e.g.", "e.g.");
-                        word.Meaning = wordParaphrase;
-                    }
-                    else
-                    {
-                        regexMeaning = new Regex(@"(?isx)
-                       <(br)\b[^>]*>                   #开始标记“<tag...>”
-                        
-                       (?:(?!</p>).)* (?=</p>)                         
-                     ");
-
-                        sentense = regexMeaning.Match(expression);
-
-                        if (sentense.Success)
-                        {
-                            var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();// sentense.Value;
-                            wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
-                            wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
-                            wordParaphrase = wordParaphrase.Replace("&nbsp;&nbsp;e.g.", "e.g.");
-                            word.Meaning = wordParaphrase;
-                        }
-                    }
-                }
+                
 
                 // full sentense
-                var regexfullsentense = new Regex(Regex.Escape("&nbsp;&nbsp;e.g.") + ".*", RegexOptions.Singleline);
+                var regexfullsentense = new Regex(@"(?<=<font\s+color=""#336600""\s*>).*", RegexOptions.Singleline);
                 var fullsentenseMatch = regexfullsentense.Match(expression);
                 if (fullsentenseMatch.Success)
                 {
@@ -294,6 +236,12 @@ namespace ColleageEnglishVocaburary
                     fullsentense = Regex.Replace(fullsentense, "&nbsp;$", "");
                     word.Sentence = fullsentense;
                 }
+
+                if (!string.IsNullOrWhiteSpace(word.Meaning) && !string.IsNullOrWhiteSpace(word.Sentence) && word.Meaning.Contains(word.Sentence))
+                {
+                    word.Meaning = Regex.Replace(word.Meaning, word.Sentence + "$", "");
+                }
+
                 newWords.Add(word);
 
                 progressBar1.Value += progressBar1.LargeChange;
