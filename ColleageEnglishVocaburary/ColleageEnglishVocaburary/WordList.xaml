@@ -84,7 +84,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ProgressBar Name="progressBar1" Grid.Row="0" Value="0" IsIndeterminate="False" Height="50"></ProgressBar>
+                    <ProgressBar Name="progressBar1" Grid.Row="0" Value="0" IsIndeterminate="False" Height="50" Maximum="100"></ProgressBar>
                     <TextBlock Text="{Binding DownloadingStatus}" Grid.Row="1"></TextBlock>
                 </Grid>
             </phone:PanoramaItem>

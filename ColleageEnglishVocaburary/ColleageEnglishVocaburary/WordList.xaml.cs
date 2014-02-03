@@ -134,9 +134,9 @@ namespace ColleageEnglishVocaburary
                         \)                          #普通闭括弧
                        ");
             var wordId = 0;
-            //double totalCount = mc.Count;
-            //progressBar1.Maximum = totalCount;
-            progressBar1.LargeChange = 0.6d;
+            double totalCount = mc.Count;
+            var percentage = 1d/totalCount*100d;
+            progressBar1.LargeChange = percentage;
             foreach (Match m in mc)
             {
                 var expression = m.Value;
