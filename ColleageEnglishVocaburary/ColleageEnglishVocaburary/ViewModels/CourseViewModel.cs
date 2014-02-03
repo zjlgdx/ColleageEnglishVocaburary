@@ -28,7 +28,7 @@ namespace ColleageEnglishVocaburary.ViewModels
             {
                 this.Words.Add(new WordViewModel
                     {
-                        Id = word.Id,
+                        WordId = word.WordId,
                         Word = word.Word,
                         Meaning = word.Meaning,
                         Sentence = word.Sentence,
@@ -59,11 +59,11 @@ namespace ColleageEnglishVocaburary.ViewModels
             set { this.SetProperty(ref this._courseImage, value); }
         }
 
-        private string _downloadingItem;
-        public string DownloadingItem
+        private string _downloadingStatus;
+        public string DownloadingStatus
         {
-            get { return _downloadingItem; }
-            set { this.SetProperty(ref this._downloadingItem, value); }
+            get { return _downloadingStatus; }
+            set { this.SetProperty(ref this._downloadingStatus, value); }
         }
 
         /// <summary>

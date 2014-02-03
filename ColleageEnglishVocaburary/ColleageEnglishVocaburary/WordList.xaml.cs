@@ -1,12 +1,12 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using System.Windows.Threading;
-using AudioSharedLibrary;
+﻿using AudioSharedLibrary;
 using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
+using ColleageEnglishVocaburary.Resources;
 using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+using PlaylistFilePlaybackAgent;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,11 +14,10 @@ using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
-using Microsoft.Phone.Shell;
-using PlaylistFilePlaybackAgent;
+using System.Windows.Threading;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
 namespace ColleageEnglishVocaburary
@@ -86,7 +85,7 @@ namespace ColleageEnglishVocaburary
                 if (!storage.FileExists(ViewModel.CourseId))
                 {
 
-                    await downloadWord(courseId);
+                    await DownloadWord(courseId);
                 }
             }
 
@@ -95,20 +94,16 @@ namespace ColleageEnglishVocaburary
             base.OnNavigatedTo(e);
         }
 
-        private async Task downloadWord(string courseId)
+        private async Task DownloadWord(string courseId)
         {
-            //status.Text = "Start to download words!";
             var bookId = courseId.Substring(0, 2);
-            string baseUrl = "http://educenter.fudan.edu.cn/collegeenglish/new/integrated" + bookId;
-            string url = "http://educenter.fudan.edu.cn/collegeenglish/new/integrated" + courseId;
+            string bookUrl = string.Format(AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_URL, bookId); //"http://educenter.fudan.edu.cn/collegeenglish/new/integrated" + bookId;
+            string courseUrl = string.Format(AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_URL, courseId); //"http://educenter.fudan.edu.cn/collegeenglish/new/integrated" + courseId;
 
-            var client = new WebClient();
-            client.Encoding = DBCSCodePage.DBCSEncoding.GetDBCSEncoding("gb2312");
-            string response = await client.DownloadStringTaskAsync(new Uri(url));
-            //xmld
-            var course = new Course();
-            course.CourseId = courseId;
-            course.CourseName = courseId;
+            var client = new WebClient { Encoding = DBCSCodePage.DBCSEncoding.GetDBCSEncoding("gb2312") };
+            string response = await client.DownloadStringTaskAsync(new Uri(courseUrl));
+   
+            var course = new Course { CourseId = courseId, CourseName = courseId };
             var newWords = new List<NewWord>();
 
             // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
@@ -142,7 +137,7 @@ namespace ColleageEnglishVocaburary
             {
                 var expression = m.Value;
                 var word = new NewWord();
-                word.Id = (wordId++).ToString();
+                word.WordId = (wordId++).ToString();
                 var matches = regexMedia.Matches(expression);
                 var index = 0;
                 foreach (Match match in matches)
@@ -153,7 +148,7 @@ namespace ColleageEnglishVocaburary
                     {
                         continue;
                     }
-                    var mp3Path = course.CourseName + word.Id + mp3;
+                    var mp3Path = course.CourseName + word.WordId + mp3;
                     mp3Path = mp3Path.Replace("/", "");
                     if (index == 0)
                     {
@@ -167,7 +162,7 @@ namespace ColleageEnglishVocaburary
                     index++;
                     try
                     {
-                        Stream stream = await client.OpenReadTaskAsync(baseUrl + mp3);
+                        Stream stream = await client.OpenReadTaskAsync(bookUrl + mp3);
                         await FileStorageOperations.SaveToLocalFolderAsync(mp3Path, stream);
                     }
                     catch (Exception)
@@ -208,9 +203,7 @@ namespace ColleageEnglishVocaburary
                     wordParaphrase = Regex.Replace(wordParaphrase, @"<[^>]+>", "");
                     word.Word = wordParaphrase;
 
-                    ViewModel.DownloadingItem = "downloading " + wordParaphrase;
-                    //word.WordSavePath = lession.LessionName + word.WordId;
-                    //await FileStorageOperations.SaveToLocalFolderAsync(word.WordSavePath, wordParaphrase);
+                    ViewModel.DownloadingStatus = "downloading " + wordParaphrase;
                 }
 
                 // sentense 句子
@@ -234,7 +227,6 @@ namespace ColleageEnglishVocaburary
                     var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();
                     wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
                     word.Meaning = wordParaphrase;
-                    //await FileStorageOperations.SaveToLocalFolderAsync(wordParaphrase);
                 }
 
                 // full sentense
@@ -247,7 +239,6 @@ namespace ColleageEnglishVocaburary
                     fullsentense = fullsentense.Replace("&nbsp;&nbsp;e.g.", "e.g.");
                     fullsentense = Regex.Replace(fullsentense, "\\s+", " ");
                     word.Sentence = fullsentense;
-                    // await FileStorageOperations.SaveToLocalFolderAsync(fullsentense);
                 }
                 newWords.Add(word);
             }
@@ -259,9 +250,7 @@ namespace ColleageEnglishVocaburary
 
 
 
-            ViewModel.DownloadingItem = "DONE!";
-
-            //status.Text = "DONE!";
+            ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE;
         }
 
 

@@ -85,7 +85,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="{Binding DownloadingItem}" Grid.Row="0"></TextBlock>
+                    <TextBlock Text="{Binding DownloadingStatus}" Grid.Row="0"></TextBlock>
                 </Grid>
             </phone:PanoramaItem>
         </phone:Panorama>

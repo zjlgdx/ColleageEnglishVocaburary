@@ -2,7 +2,7 @@
 {
     public class NewWord 
     {
-        public string Id { get; set; }
+        public string WordId { get; set; }
         public string Word { get; set; }
         public string WordVoice { get; set; }
         public string Meaning { get; set; }

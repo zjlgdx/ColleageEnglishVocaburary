@@ -6,11 +6,11 @@ namespace ColleageEnglishVocaburary.ViewModels
 {
     public class WordViewModel : INotifyPropertyChanged
     {
-        private string _id;
-        public string Id
+        private string _wordId;
+        public string WordId
         {
-            get { return _id; }
-            set { this.SetProperty(ref this._id, value); }
+            get { return _wordId; }
+            set { this.SetProperty(ref this._wordId, value); }
         }
 
         private string _word;
