@@ -51,6 +51,21 @@ namespace ColleageEnglishVocaburary
                                                   (?(Open)(?!))    #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
                                                   \)               #普通闭括弧
                                                  ";
+        private const string WORD_PATTERN = @"(?isx)
+                                                <(font)\s+color=""#3366cc""\s*>    #开始标记“<tag...>”
+                                                (?>                         #分组构造，用来限定量词“*”修饰范围
+                                                    <\1[^>]*>  (?<Open>)    #命名捕获组，遇到开始标记，入栈，Open计数加1
+                                                |                           #分支结构
+                                                    </\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
+                                                |                           #分支结构
+                                                    (?:(?!</?\1\b).)+       #右侧不为开始或结束标记的任意字符
+                                                )+                          #以上子串出现0次或任意多次
+                                                (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
+                                                </\1>                       #结束标记“</tag>”
+                                            ";
+
+        private const string WORD_PHRASE_PATTERN =@"(?is)<(br)\b[^>]*>((?!<font\s+color=""#336600""\s*>).)*";
+        private const string SENTENCE_PATTERN = @"(?<=<font\s+color=""#336600""\s*>).*";
         private DispatcherTimer playTimer;
         private EventHandler playTimerTickEventHandler;
 
@@ -135,23 +150,23 @@ namespace ColleageEnglishVocaburary
  
             var regexParagraph = new Regex(PARAGRAPH_PATTERN);
             
-            var mcParagraph = regexParagraph.Matches(response);
+            var matchParagraphes = regexParagraph.Matches(response);
             
             var regexMedia = new Regex(MP3_MEDIA_PATTERN);
 
             var wordId = 0;
-            double totalCount = mcParagraph.Count;
+            double totalCount = matchParagraphes.Count;
             var percentage = 1d/totalCount*100d;
             progressBar1.LargeChange = percentage;
 
-            foreach (Match m in mcParagraph)
+            foreach (Match matchParagraph in matchParagraphes)
             {
-                var expression = m.Value;
-                var word = new NewWord();
-                word.WordId = (wordId++).ToString();
-                var matches = regexMedia.Matches(expression);
+                var paragraph = matchParagraph.Value;
+                var objWord = new NewWord();
+                objWord.WordId = (wordId++).ToString();
+                var matchMedias = regexMedia.Matches(paragraph);
                 var index = 0;
-                foreach (Match match in matches)
+                foreach (Match match in matchMedias)
                 {
                     // 提取mp3文件并保存到独立存储中
                     var mp3 = match.Value.Replace("('", "").Replace("')", "");
@@ -159,15 +174,15 @@ namespace ColleageEnglishVocaburary
                     {
                         continue;
                     }
-                    var mp3Path = course.CourseName + word.WordId + mp3;
+                    var mp3Path = course.CourseName + objWord.WordId + mp3;
                     mp3Path = mp3Path.Replace("/", "");
                     if (index == 0)
                     {
-                        word.WordVoice = mp3Path;
+                        objWord.WordVoice = mp3Path;
                     }
                     else
                     {
-                        word.SentenceVoice = mp3Path;
+                        objWord.SentenceVoice = mp3Path;
                     }
 
                     index++;
@@ -185,71 +200,44 @@ namespace ColleageEnglishVocaburary
                 }
 
                 // word and phase
-                //<font color="#3366cc">
-                string color = Regex.Escape("#3366cc");                    //动态获取id
-                string pattern = @"(?isx)
-                      <(font)\s+color=""#3366cc""\s*>                 #开始标记“<tag...>”
-                          (?>                         #分组构造，用来限定量词“*”修饰范围
-                              <\1[^>]*>  (?<Open>)    #命名捕获组，遇到开始标记，入栈，Open计数加1
-                          |                           #分支结构
-                              </\1>  (?<-Open>)       #狭义平衡组，遇到结束标记，出栈，Open计数减1
-                          |                           #分支结构
-                              (?:(?!</?\1\b).)+       #右侧不为开始或结束标记的任意字符
-                          )+                          #以上子串出现0次或任意多次
-                          (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
-                      </\1>                           #结束标记“</tag>”
-                     ";
-                //pattern = @"(?<=<font\s+color=""#3366cc""\s*>)[^<]+(?=</font>)";
-                var regexWord = new Regex(pattern);
+                var regexWord = new Regex(WORD_PATTERN);
 
-
-
-                var matchWord = regexWord.Match(expression);
+                var matchWord = regexWord.Match(paragraph);
 
                 if (matchWord.Success)
                 {
-                    var wordParaphrase = Regex.Replace(matchWord.Value, "\\s+", " ");
-                    wordParaphrase = Regex.Replace(wordParaphrase, @"^<font\s+color=""#3366cc""\s*>", "");
-                    wordParaphrase = Regex.Replace(wordParaphrase, @"</font>$", "");
-                    wordParaphrase = Regex.Replace(wordParaphrase, @"<[^>]+>", "");
-                    word.Word = wordParaphrase;
+                    var word = Regex.Replace(matchWord.Value, "\\s+", " ");
+                    word = Regex.Replace(word, @"^<font\s+color=""#3366cc""\s*>", "");
+                    word = Regex.Replace(word, @"</font>$", "");
+                    word = Regex.Replace(word, @"<[^>]+>", "");
+                    objWord.Word = word;
 
-                    ViewModel.DownloadingStatus = "Downloading word : " + wordParaphrase;
+                    ViewModel.DownloadingStatus = "Downloading word : " + word;
                 }
 
-                // sentense 句子
-                //<br>
-
-                var regexMeaning = new Regex(@"(?is)<(br)\b[^>]*>((?!<font\s+color=""#336600""\s*>).)*");
-                var sentense = regexMeaning.Match(expression);
-                if (sentense.Success)
+                var regexWordPhrase = new Regex(WORD_PHRASE_PATTERN);
+                var matchWordPhrase = regexWordPhrase.Match(paragraph);
+                if (matchWordPhrase.Success)
                 {
-                    var wordParaphrase = Regex.Replace(sentense.Value, "\\s+|<br>", " ").Trim();
-                    wordParaphrase = Regex.Replace(wordParaphrase, "<[^>]+>", "");
-                    wordParaphrase = Regex.Replace(wordParaphrase, "&nbsp;$", "");
-                    word.Meaning = wordParaphrase;
+                    var wordPhrase = Regex.Replace(matchWordPhrase.Value, "\\s+|<br>", " ").Trim();
+                    wordPhrase = Regex.Replace(wordPhrase, "<[^>]+>", "");
+                    wordPhrase = Regex.Replace(wordPhrase, "&nbsp;$", "");
+                    objWord.WordPhrase = wordPhrase;
                 }
-                
 
-                // full sentense
-                var regexfullsentense = new Regex(@"(?<=<font\s+color=""#336600""\s*>).*", RegexOptions.Singleline);
-                var fullsentenseMatch = regexfullsentense.Match(expression);
-                if (fullsentenseMatch.Success)
+                var regexSentence = new Regex(SENTENCE_PATTERN, RegexOptions.Singleline);
+                var sentenceMatch = regexSentence.Match(paragraph);
+                if (sentenceMatch.Success)
                 {
                     var regexMark = new Regex("<[^>]+>");
-                    var fullsentense = regexMark.Replace(fullsentenseMatch.Value, "");
-                    fullsentense = fullsentense.Replace("&nbsp;&nbsp;e.g.", "e.g.");
-                    fullsentense = Regex.Replace(fullsentense, "\\s+", " ");
-                    fullsentense = Regex.Replace(fullsentense, "&nbsp;$", "");
-                    word.Sentence = fullsentense;
+                    var sentence = regexMark.Replace(sentenceMatch.Value, "");
+                    sentence = sentence.Replace("&nbsp;&nbsp;e.g.", "e.g.");
+                    sentence = Regex.Replace(sentence, "\\s+", " ");
+                    sentence = Regex.Replace(sentence, "&nbsp;$", "");
+                    objWord.Sentence = sentence;
                 }
 
-                if (!string.IsNullOrWhiteSpace(word.Meaning) && !string.IsNullOrWhiteSpace(word.Sentence) && word.Meaning.Contains(word.Sentence))
-                {
-                    word.Meaning = Regex.Replace(word.Meaning, word.Sentence + "$", "");
-                }
-
-                newWords.Add(word);
+                newWords.Add(objWord);
 
                 progressBar1.Value += progressBar1.LargeChange;
             }
@@ -297,6 +285,8 @@ namespace ColleageEnglishVocaburary
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
         Playlist playlist;
+       
+
         private void WordsList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 

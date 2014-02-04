@@ -30,7 +30,7 @@ namespace ColleageEnglishVocaburary.ViewModels
                     {
                         WordId = word.WordId,
                         Word = word.Word,
-                        Meaning = word.Meaning,
+                        WordPhrase = word.WordPhrase,
                         Sentence = word.Sentence,
                         SentenceVoice = word.SentenceVoice,
                         WordVoice = word.WordVoice

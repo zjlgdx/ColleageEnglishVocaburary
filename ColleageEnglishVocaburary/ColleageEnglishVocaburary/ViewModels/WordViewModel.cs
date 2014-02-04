@@ -27,11 +27,11 @@ namespace ColleageEnglishVocaburary.ViewModels
             set { this.SetProperty(ref this._wordVoice, value); }
         }
 
-        private string _meaning;
-        public string Meaning
+        private string _wordPhrase;
+        public string WordPhrase
         {
-            get { return _meaning; }
-            set { this.SetProperty(ref this._meaning, value); }
+            get { return _wordPhrase; }
+            set { this.SetProperty(ref this._wordPhrase, value); }
         }
 
         private string _sentence;
