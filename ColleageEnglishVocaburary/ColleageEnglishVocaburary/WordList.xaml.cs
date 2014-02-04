@@ -70,6 +70,8 @@ namespace ColleageEnglishVocaburary
         private EventHandler playTimerTickEventHandler;
 
         private CourseViewModel viewModel = null;
+        
+        Playlist _playlist;
 
         /// <summary>
         /// A static ViewModel used by the views to bind against.
@@ -95,7 +97,7 @@ namespace ColleageEnglishVocaburary
             playTimer.Interval = TimeSpan.FromMilliseconds(1000);
             playTimerTickEventHandler = new EventHandler(PlayTimer_Tick);
 
-            ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["DefaultAppBar"];
+            ApplicationBar = (ApplicationBar)Resources["DefaultAppBar"];
 
             DataContext = ViewModel;
         }
@@ -164,6 +166,7 @@ namespace ColleageEnglishVocaburary
                 var paragraph = matchParagraph.Value;
                 var objWord = new NewWord();
                 objWord.WordId = (wordId++).ToString();
+
                 var matchMedias = regexMedia.Matches(paragraph);
                 var index = 0;
                 foreach (Match match in matchMedias)
@@ -194,48 +197,14 @@ namespace ColleageEnglishVocaburary
                     catch (Exception)
                     {
                     }
-
-
-
                 }
 
                 // word and phase
-                var regexWord = new Regex(WORD_PATTERN);
+                FetchWord(paragraph, objWord);
 
-                var matchWord = regexWord.Match(paragraph);
+                FetchWordPhrase(paragraph, objWord);
 
-                if (matchWord.Success)
-                {
-                    var word = Regex.Replace(matchWord.Value, "\\s+", " ");
-                    word = Regex.Replace(word, @"^<font\s+color=""#3366cc""\s*>", "");
-                    word = Regex.Replace(word, @"</font>$", "");
-                    word = Regex.Replace(word, @"<[^>]+>", "");
-                    objWord.Word = word;
-
-                    ViewModel.DownloadingStatus = "Downloading word : " + word;
-                }
-
-                var regexWordPhrase = new Regex(WORD_PHRASE_PATTERN);
-                var matchWordPhrase = regexWordPhrase.Match(paragraph);
-                if (matchWordPhrase.Success)
-                {
-                    var wordPhrase = Regex.Replace(matchWordPhrase.Value, "\\s+|<br>", " ").Trim();
-                    wordPhrase = Regex.Replace(wordPhrase, "<[^>]+>", "");
-                    wordPhrase = Regex.Replace(wordPhrase, "&nbsp;$", "");
-                    objWord.WordPhrase = wordPhrase;
-                }
-
-                var regexSentence = new Regex(SENTENCE_PATTERN, RegexOptions.Singleline);
-                var sentenceMatch = regexSentence.Match(paragraph);
-                if (sentenceMatch.Success)
-                {
-                    var regexMark = new Regex("<[^>]+>");
-                    var sentence = regexMark.Replace(sentenceMatch.Value, "");
-                    sentence = sentence.Replace("&nbsp;&nbsp;e.g.", "e.g.");
-                    sentence = Regex.Replace(sentence, "\\s+", " ");
-                    sentence = Regex.Replace(sentence, "&nbsp;$", "");
-                    objWord.Sentence = sentence;
-                }
+                FetchSentence(paragraph, objWord);
 
                 newWords.Add(objWord);
 
@@ -244,14 +213,56 @@ namespace ColleageEnglishVocaburary
 
             course.NewWords = newWords;
 
-
             await MyDataSerializer<Course>.SaveObjectsAsync(course, ViewModel.CourseId);
-
-
 
             ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE;
         }
 
+        private static void FetchSentence(string paragraph, NewWord objWord)
+        {
+            var regexSentence = new Regex(SENTENCE_PATTERN, RegexOptions.Singleline);
+            var sentenceMatch = regexSentence.Match(paragraph);
+            if (sentenceMatch.Success)
+            {
+                var regexMark = new Regex("<[^>]+>");
+                var sentence = regexMark.Replace(sentenceMatch.Value, "");
+                sentence = sentence.Replace("&nbsp;&nbsp;e.g.", "e.g.");
+                sentence = Regex.Replace(sentence, "\\s+", " ");
+                sentence = Regex.Replace(sentence, "&nbsp;$", "");
+                objWord.Sentence = sentence;
+            }
+        }
+
+        private static void FetchWordPhrase(string paragraph, NewWord objWord)
+        {
+            var regexWordPhrase = new Regex(WORD_PHRASE_PATTERN);
+            var matchWordPhrase = regexWordPhrase.Match(paragraph);
+            if (matchWordPhrase.Success)
+            {
+                var wordPhrase = Regex.Replace(matchWordPhrase.Value, "\\s+|<br>", " ").Trim();
+                wordPhrase = Regex.Replace(wordPhrase, "<[^>]+>", "");
+                wordPhrase = Regex.Replace(wordPhrase, "&nbsp;$", "");
+                objWord.WordPhrase = wordPhrase;
+            }
+        }
+
+        private void FetchWord(string paragraph, NewWord objWord)
+        {
+            var regexWord = new Regex(WORD_PATTERN);
+
+            var matchWord = regexWord.Match(paragraph);
+
+            if (matchWord.Success)
+            {
+                var word = Regex.Replace(matchWord.Value, "\\s+", " ");
+                word = Regex.Replace(word, @"^<font\s+color=""#3366cc""\s*>", "");
+                word = Regex.Replace(word, @"</font>$", "");
+                word = Regex.Replace(word, @"<[^>]+>", "");
+                objWord.Word = word;
+
+                ViewModel.DownloadingStatus = "Downloading word : " + word;
+            }
+        }
 
         private void Word_OnTap(object sender, GestureEventArgs gestureEventArgs)
         {
@@ -284,7 +295,7 @@ namespace ColleageEnglishVocaburary
                                 EnabledPlayerControls.Pause);
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
-        Playlist playlist;
+        
        
 
         private void WordsList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -292,26 +303,17 @@ namespace ColleageEnglishVocaburary
 
             if (WordsList.SelectedItems.Count > 0)
             {
-                
-
-                ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["PlayAppBar"];
-
-                
+                ApplicationBar = (ApplicationBar)Resources["PlayAppBar"];
 
                 // Set fields of appbar buttons; otherwise they're null
                 prevAppBarButton = this.ApplicationBar.Buttons[0] as ApplicationBarIconButton;
                 playAppBarButton = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
                 pauseAppBarButton = this.ApplicationBar.Buttons[2] as ApplicationBarIconButton;
                 nextAppBarButton = this.ApplicationBar.Buttons[3] as ApplicationBarIconButton;
-
-                
-
-                // Set CompositionTarget.Rendering handler
-                //CompositionTarget.Rendering += OnCompositionTargetRendering;
             }
             else
             {
-                ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["DefaultAppBar"];
+                ApplicationBar = (ApplicationBar)Resources["DefaultAppBar"];
                 WordsList.EnforceIsSelectionEnabled = false;
             }
         }
@@ -319,7 +321,6 @@ namespace ColleageEnglishVocaburary
 
         void UpdateScreen()
         {
-
             AudioTrack audioTrack = null;
 
             try
@@ -331,15 +332,8 @@ namespace ColleageEnglishVocaburary
             {
             }
 
-            //playerState.Text = state != PlayState.Unknown ? state.ToString() : null;
-
             if (audioTrack != null)
             {
-              //  albumText.Text = audioTrack.Album;
-             //   artistText.Text = audioTrack.Artist;
-             //   trackText.Text = audioTrack.Title;
-
-           //     positionSlider.Visibility = Visibility.Visible;
                 if (prevAppBarButton != null)
                 {
                     prevAppBarButton.IsEnabled = 0 != (audioTrack.PlayerControls & EnabledPlayerControls.SkipPrevious);
@@ -347,16 +341,9 @@ namespace ColleageEnglishVocaburary
                     playAppBarButton.IsEnabled = BackgroundAudioPlayer.Instance.PlayerState == PlayState.Paused;
                     pauseAppBarButton.IsEnabled = BackgroundAudioPlayer.Instance.PlayerState == PlayState.Playing;
                 }
-
-               
             }
             else
             {
-            //    albumText.Text = null;
-            //    artistText.Text = null;
-           //     trackText.Text = null;
-
-           //     positionSlider.Visibility = Visibility.Collapsed;
                 if (prevAppBarButton != null)
                 {
                     prevAppBarButton.IsEnabled = false;
@@ -366,7 +353,6 @@ namespace ColleageEnglishVocaburary
                 }
             }
         }
-
 
         private void OnBackgroundAudioPlayerPlayStateChanged(object sender, EventArgs e)
         {
@@ -386,17 +372,15 @@ namespace ColleageEnglishVocaburary
 
         private void OnPlayAppBarButtonClick(object sender, EventArgs e)
         {
-           
             if (WordsList.SelectedItems.Count > 0)
             {
                 // Create playlist
-                playlist = new Playlist();
+                _playlist = new Playlist();
 
                 // Build the playlist
                 int count = 0;
                 foreach (WordViewModel word in WordsList.SelectedItems)
                 {
-
                     EnabledPlayerControls playerControls =
                             EnabledPlayerControls.Pause |
                             (count != 0 ? EnabledPlayerControls.SkipPrevious : 0) |
@@ -410,7 +394,7 @@ namespace ColleageEnglishVocaburary
                         Album = "College English Book",
                         PlayerControls = playerControls
                     };
-                    playlist.Tracks.Add(track);
+                    _playlist.Tracks.Add(track);
 
                     count++;
                     if (!string.IsNullOrEmpty(word.SentenceVoice))
@@ -428,17 +412,14 @@ namespace ColleageEnglishVocaburary
                             Album = "College English Book",
                             PlayerControls = playerControls2
                         };
-                        playlist.Tracks.Add(track2);
+                        _playlist.Tracks.Add(track2);
 
                         count++;
                     }
-
-                    
                 }
 
-
                 // Save it to isolated storage
-                playlist.Save("ColleageEnglishVocaburaryPlaylist.xml");
+                _playlist.Save("ColleageEnglishVocaburaryPlaylist.xml");
             }
             BackgroundAudioPlayer.Instance.Play();
             playAppBarButton.IsEnabled = false;
@@ -468,7 +449,7 @@ namespace ColleageEnglishVocaburary
 
         }
 
-        private string GetCourseName(string courseId)
+        private static string GetCourseName(string courseId)
         {
             var bookId = courseId.Substring(0, 1);
             string bookName;
