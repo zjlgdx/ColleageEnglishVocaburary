@@ -24,6 +24,33 @@ namespace ColleageEnglishVocaburary
 {
     public partial class WordList : PhoneApplicationPage
     {
+        // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
+        // 提取单词段落表达式
+        private const string PARAGRAPH_PATTERN = @"(?isx)   #匹配模式，忽略大小写，“.”匹配任意字符
+                                                    <p[^>]*>  #开始标记“<p...>”
+                                                    (?>       #分组构造，用来限定量词“*”修饰范围
+                                                       <p[^>]*>(?<Open>)   #命名捕获组，遇到开始标记，入栈，Open计数加1
+                                                    |         #分支结构
+                                                       </p>(?<-Open>)      #狭义平衡组，遇到结束标记，出栈，Open计数减1
+                                                    |                      #分支结构
+                                                       <a\s+name=""nw\d+""\s*></a>(?:(?!</?p\b).)+      #右侧紧接着<a name=""nw2""></a>，之后右侧不为开始或结束标记的任意字符
+                                                    )+                     #以上子串出现0次或任意多次
+                                                    (?(Open)(?!))          #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
+                                                    </p>                   #结束标记“</p>”
+                                                    ";
+        // 提取mp3媒体文件正则表达式
+        private const string MP3_MEDIA_PATTERN = @"(?isx)
+                                                   \(              #普通字符“(”
+                                                  (?>              #分组构造，用来限定量词“*”修饰范围
+                                                    [^()]+         #非括弧的其它任意字符
+                                                  |                #分支结构
+                                                    \(  (?<Open>)  #命名捕获组，遇到开括弧Open计数加1
+                                                  |                #分支结构
+                                                    \)  (?<-Open>) #狭义平衡组，遇到闭括弧Open计数减1
+                                                  )+               #以上子串出现0次或任意多次
+                                                  (?(Open)(?!))    #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
+                                                  \)               #普通闭括弧
+                                                 ";
         private DispatcherTimer playTimer;
         private EventHandler playTimerTickEventHandler;
 
@@ -105,39 +132,19 @@ namespace ColleageEnglishVocaburary
             var courseName = GetCourseName(courseId);
             var course = new Course { CourseId = courseId, CourseName = courseName };
             var newWords = new List<NewWord>();
+ 
+            var regexParagraph = new Regex(PARAGRAPH_PATTERN);
+            
+            var mcParagraph = regexParagraph.Matches(response);
+            
+            var regexMedia = new Regex(MP3_MEDIA_PATTERN);
 
-            // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
-            var regexParagraph = new Regex(@"(?isx)                      #匹配模式，忽略大小写，“.”匹配任意字符
-                      <p[^>]*>                      #开始标记“<p...>”
-                          (?>                         #分组构造，用来限定量词“*”修饰范围
-                              <p[^>]*>  (?<Open>)   #命名捕获组，遇到开始标记，入栈，Open计数加1
-                          |                           #分支结构
-                              </p>  (?<-Open>)      #狭义平衡组，遇到结束标记，出栈，Open计数减1
-                          |                           #分支结构
-                              <a\s+name=""nw\d+""\s*></a>(?:(?!</?p\b).)+      #右侧紧接着<a name=""nw2""></a>，之后右侧不为开始或结束标记的任意字符
-                          )+                          #以上子串出现0次或任意多次
-                          (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
-                      </p>                          #结束标记“</p>”
-                      ");
-            var mc = regexParagraph.Matches(response);
-
-            var regexMedia = new Regex(@"(?isx)
-                            \(                         #普通字符“(”
-                            (?>                     #分组构造，用来限定量词“*”修饰范围
-                                [^()]+              #非括弧的其它任意字符
-                            |                       #分支结构
-                                \(  (?<Open>)       #命名捕获组，遇到开括弧Open计数加1
-                            |                       #分支结构
-                                \)  (?<-Open>)      #狭义平衡组，遇到闭括弧Open计数减1
-                            )+                      #以上子串出现0次或任意多次
-                            (?(Open)(?!))           #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
-                        \)                          #普通闭括弧
-                       ");
             var wordId = 0;
-            double totalCount = mc.Count;
+            double totalCount = mcParagraph.Count;
             var percentage = 1d/totalCount*100d;
             progressBar1.LargeChange = percentage;
-            foreach (Match m in mc)
+
+            foreach (Match m in mcParagraph)
             {
                 var expression = m.Value;
                 var word = new NewWord();
@@ -146,7 +153,7 @@ namespace ColleageEnglishVocaburary
                 var index = 0;
                 foreach (Match match in matches)
                 {
-                    // mp3 files
+                    // 提取mp3文件并保存到独立存储中
                     var mp3 = match.Value.Replace("('", "").Replace("')", "");
                     if (!mp3.EndsWith(".mp3"))
                     {
@@ -474,9 +481,9 @@ namespace ColleageEnglishVocaburary
         private string GetCourseName(string courseId)
         {
             var bookId = courseId.Substring(0, 1);
-            var bookName = string.Empty;
+            string bookName;
             var unitId = courseId.Substring(2, 2);
-            var unitName = string.Empty;
+            string unitName;
             switch (bookId)
             {
                 case "1":
@@ -499,28 +506,28 @@ namespace ColleageEnglishVocaburary
             switch (unitId)
             {
                 case "01":
-                    unitName = "Unit One";
+                    unitName = "第一单元";
                     break;
                 case "02":
-                    unitName = "Unit Two";
+                    unitName = "第二单元";
                     break;
                 case "03":
-                   unitName = "Unit Three";
+                    unitName = "第三单元";
                     break;
                 case "04":
-                    unitName = "Unit Four";
+                    unitName = "第四单元";
                     break;
                 case "05":
-                    unitName = "Unit Five";
+                    unitName = "第五单元";
                     break;
                 case "06":
-                    unitName = "Unit Six";
+                    unitName = "第六单元";
                     break;
                 case "07":
-                    unitName = "Unit Seven";
+                    unitName = "第七单元";
                     break;
                 case "08":
-                    unitName = "Unit Eight";
+                    unitName = "第八单元";
                     break;
                 default:
                     unitName = "Unknown";
