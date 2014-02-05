@@ -24,6 +24,8 @@ namespace ColleageEnglishVocaburary
 {
     public partial class WordList : PhoneApplicationPage
     {
+        #region regex expression
+
         // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
         // 提取单词段落表达式
         private const string PARAGRAPH_PATTERN = @"(?isx)   #匹配模式，忽略大小写，“.”匹配任意字符
@@ -66,6 +68,9 @@ namespace ColleageEnglishVocaburary
 
         private const string WORD_PHRASE_PATTERN =@"(?is)<(br)\b[^>]*>((?!<font\s+color=""#336600""\s*>).)*";
         private const string SENTENCE_PATTERN = @"(?<=<font\s+color=""#336600""\s*>).*";
+
+        #endregion
+
         private DispatcherTimer playTimer;
         private EventHandler playTimerTickEventHandler;
 
@@ -136,6 +141,8 @@ namespace ColleageEnglishVocaburary
             wordListItem.Visibility = Visibility.Visible;
             base.OnNavigatedTo(e);
         }
+
+        #region FetchWords
 
         private async Task DownloadWord(string courseId)
         {
@@ -272,12 +279,14 @@ namespace ColleageEnglishVocaburary
             }
         }
 
+        #endregion
+
         private void Word_OnTap(object sender, GestureEventArgs gestureEventArgs)
         {
             var uiElement = sender as TextBlock;
             var voice = (string)uiElement.Tag;
             var word = uiElement.Text;
-            AudioTrack audioTrack =
+            var audioTrack =
                 new AudioTrack(new Uri(voice, UriKind.Relative),
                                 word,
                                 word,
@@ -293,7 +302,7 @@ namespace ColleageEnglishVocaburary
             var uiElement = sender as TextBlock;
             var voice = (string)uiElement.Tag;
             var sentence = uiElement.Text;
-            AudioTrack audioTrack =
+            var audioTrack =
                 new AudioTrack(new Uri(voice, UriKind.Relative),
                                 sentence,
                                 sentence,
@@ -303,12 +312,9 @@ namespace ColleageEnglishVocaburary
                                 EnabledPlayerControls.Pause);
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
-        
-       
 
         private void WordsList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             if (WordsList.SelectedItems.Count > 0)
             {
                 ApplicationBar = (ApplicationBar)Resources["PlayAppBar"];
@@ -325,7 +331,6 @@ namespace ColleageEnglishVocaburary
                 WordsList.EnforceIsSelectionEnabled = false;
             }
         }
-
 
         void UpdateScreen()
         {
