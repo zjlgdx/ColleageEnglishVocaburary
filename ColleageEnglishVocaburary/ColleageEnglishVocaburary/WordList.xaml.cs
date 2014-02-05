@@ -153,8 +153,6 @@ namespace ColleageEnglishVocaburary
             var regexParagraph = new Regex(PARAGRAPH_PATTERN);
             
             var matchParagraphes = regexParagraph.Matches(response);
-            
-            var regexMedia = new Regex(MP3_MEDIA_PATTERN);
 
             var wordId = 0;
             double totalCount = matchParagraphes.Count;
@@ -167,37 +165,7 @@ namespace ColleageEnglishVocaburary
                 var objWord = new NewWord();
                 objWord.WordId = (wordId++).ToString();
 
-                var matchMedias = regexMedia.Matches(paragraph);
-                var index = 0;
-                foreach (Match match in matchMedias)
-                {
-                    // 提取mp3文件并保存到独立存储中
-                    var mp3 = match.Value.Replace("('", "").Replace("')", "");
-                    if (!mp3.EndsWith(".mp3"))
-                    {
-                        continue;
-                    }
-                    var mp3Path = course.CourseName + objWord.WordId + mp3;
-                    mp3Path = mp3Path.Replace("/", "");
-                    if (index == 0)
-                    {
-                        objWord.WordVoice = mp3Path;
-                    }
-                    else
-                    {
-                        objWord.SentenceVoice = mp3Path;
-                    }
-
-                    index++;
-                    try
-                    {
-                        Stream stream = await client.OpenReadTaskAsync(bookUrl + mp3);
-                        await FileStorageOperations.SaveToLocalFolderAsync(mp3Path, stream);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
+                await FetchMedia(paragraph, course, objWord, client, bookUrl);
 
                 // word and phase
                 FetchWord(paragraph, objWord);
@@ -216,6 +184,46 @@ namespace ColleageEnglishVocaburary
             await MyDataSerializer<Course>.SaveObjectsAsync(course, ViewModel.CourseId);
 
             ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE;
+        }
+
+        private static async Task FetchMedia(string paragraph, 
+                                             Course course, 
+                                             NewWord objWord, 
+                                             WebClient client,
+                                             string bookUrl)
+        {
+            var regexMedia = new Regex(MP3_MEDIA_PATTERN);
+            var matchMedias = regexMedia.Matches(paragraph);
+            var index = 0;
+            foreach (Match matchMedia in matchMedias)
+            {
+                // 提取mp3文件并保存到独立存储中
+                var mp3 = matchMedia.Value.Replace("('", "").Replace("')", "");
+                if (!mp3.EndsWith(".mp3"))
+                {
+                    continue;
+                }
+                var mp3Path = course.CourseName + objWord.WordId + mp3;
+                mp3Path = mp3Path.Replace("/", "");
+                if (index == 0)
+                {
+                    objWord.WordVoice = mp3Path;
+                }
+                else
+                {
+                    objWord.SentenceVoice = mp3Path;
+                }
+
+                index++;
+                try
+                {
+                    Stream stream = await client.OpenReadTaskAsync(bookUrl + mp3);
+                    await FileStorageOperations.SaveToLocalFolderAsync(mp3Path, stream);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         private static void FetchSentence(string paragraph, NewWord objWord)
