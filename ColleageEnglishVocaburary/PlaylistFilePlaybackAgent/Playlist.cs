@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO.IsolatedStorage;
+using System.Threading;
 using System.Xml.Serialization;
 using System.IO;
 
@@ -7,6 +8,8 @@ namespace PlaylistFilePlaybackAgent
 {
     public class Playlist
     {
+        private static readonly Mutex mutex = new Mutex(false, "BackgroundCollegeEnglishPlayListMutex");
+
         public Playlist()
         {
             Tracks = new List<PlaylistTrack>();
@@ -17,28 +20,48 @@ namespace PlaylistFilePlaybackAgent
 
         public static Playlist Load(string filename)
         {
+            mutex.WaitOne();
             Playlist playlist = null;
-
-            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
+            try
             {
-                using (IsolatedStorageFileStream stream = storage.OpenFile(filename, FileMode.Open))
+                using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
                 {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Playlist));
-                    playlist = xmlSerializer.Deserialize(stream) as Playlist;
+                    using (IsolatedStorageFileStream stream = storage.OpenFile(filename, FileMode.Open))
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(Playlist));
+                        playlist = xmlSerializer.Deserialize(stream) as Playlist;
+                    }
                 }
             }
+            finally
+            {
+                // release the mutex even if we crashed
+                mutex.ReleaseMutex();
+            }
+
             return playlist;
         }
 
         public void Save(string filename)
         {
-            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
+            // take the mutex
+            mutex.WaitOne();
+
+            try
             {
-                using (IsolatedStorageFileStream stream = storage.CreateFile(filename))
+                using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
                 {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Playlist));
-                    xmlSerializer.Serialize(stream, this);
+                    using (IsolatedStorageFileStream stream = storage.CreateFile(filename))
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(Playlist));
+                        xmlSerializer.Serialize(stream, this);
+                    }
                 }
+            }
+            finally
+            {
+                // release the mutex even if we crashed
+                mutex.ReleaseMutex();
             }
         }
     }

@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Microsoft.Phone.BackgroundAudio;
+using System;
 using System.Windows;
-using AudioSharedLibrary;
-using Microsoft.Phone.BackgroundAudio;
-using System.Collections.Generic;
 
 namespace PlaylistFilePlaybackAgent
 {
     public class AudioPlayer : AudioPlayerAgent
     {
+        private const string _colleageenglishvocaburaryplaylistXml = "ColleageEnglishVocaburaryPlaylist.xml";
         static Playlist playlist;
         static int currentTrack = 0;
 
@@ -35,15 +34,6 @@ namespace PlaylistFilePlaybackAgent
         /// Code to execute on Unhandled Exceptions
         private void AudioPlayer_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
-            try
-            {
-                Exception ex = e.ExceptionObject;
-                BackgroundErrorNotifier.AddError(ex);
-            }
-            catch (Exception)
-            {
-            }
-
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
@@ -63,6 +53,7 @@ namespace PlaylistFilePlaybackAgent
         /// </remarks>
         protected override void OnPlayStateChanged(BackgroundAudioPlayer player, AudioTrack track, PlayState playState)
         {
+            System.Diagnostics.Debug.WriteLine("OnPlayStateChanged");
             switch (playState)
             {
                 case PlayState.TrackReady:
@@ -70,59 +61,34 @@ namespace PlaylistFilePlaybackAgent
                     break;
 
                 case PlayState.TrackEnded:
-                    //if (playlist != null && currentTrack < playlist.Tracks.Count - 1)
-                    //{
-                    //    currentTrack += 1;
-                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    //}
-                    //else
-                    //{
-                    //    player.Track = null;
-                    //}
 
-                    PlayNextTrack(player);
+                    if (player.Track == null)
+                    {
+                        if (playlist == null)
+                        {
+                            // Load playlist from isolated storage
+                            playlist = Playlist.Load(_colleageenglishvocaburaryplaylistXml);
+
+                            currentTrack = 0;
+                        }
+
+                        
+                    }
+
+
+                    if (null != playlist && ++currentTrack >= playlist.Tracks.Count)
+                    {
+                        currentTrack = 0;
+                    }
+
+                    player.Track = playlist == null ? null : playlist.Tracks[currentTrack].ToAudioTrack();
+                    System.Diagnostics.Debug.WriteLine("TrackEnded:" + (player.Track == null));
+                    System.Diagnostics.Debug.WriteLine("currentTrack:" + currentTrack);
                     break;
+                    
             }
+            System.Diagnostics.Debug.WriteLine("playState:" + playState.ToString());
             NotifyComplete();
-        }
-
-        /// <summary>
-        /// Plays the track in our playlist at the currentTrackNumber position.
-        /// </summary>
-        /// <param name="player">The BackgroundAudioPlayer</param>
-        private void PlayTrack(BackgroundAudioPlayer player)
-        {
-            if (PlayState.Paused == player.PlayerState)
-            {
-                // If we're paused, we already have 
-                // the track set, so just resume playing.
-                player.Play();
-            }
-            else
-            {
-                if (playlist == null)
-                {
-                    return;
-                }
-                // Set which track to play. When the TrackReady state is received 
-                // in the OnPlayStateChanged handler, call player.Play().
-                player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-            }
-
-        }
-
-        /// <summary>
-        /// Increments the currentTrackNumber and plays the correpsonding track.
-        /// </summary>
-        /// <param name="player">The BackgroundAudioPlayer</param>
-        private void PlayNextTrack(BackgroundAudioPlayer player)
-        {
-            if (null != playlist && ++currentTrack >= playlist.Tracks.Count)
-            {
-                currentTrack = 0;
-            }
-
-            PlayTrack(player);
         }
 
         /// <summary>
@@ -141,64 +107,56 @@ namespace PlaylistFilePlaybackAgent
         /// </remarks>
         protected override void OnUserAction(BackgroundAudioPlayer player, AudioTrack track, UserAction action, object param)
         {
+            System.Diagnostics.Debug.WriteLine("OnUserAction");
+            System.Diagnostics.Debug.WriteLine("UserAction:" + action.ToString());
             switch (action)
             {
                 case UserAction.Play:
-                    //if (player.Track == null)
+                    if (player.PlayerState != PlayState.Playing)
+                    {
+                        player.Play();
+                    }
+                  
+                    System.Diagnostics.Debug.WriteLine("player.Play()" );
+                    //if (PlayState.Paused == player.PlayerState)
                     //{
-                    //    // Load playlist from isolated storage
-                    //    playlist = Playlist.Load("ColleageEnglishVocaburaryPlaylist.xml");
-
-                    //    currentTrack = 0;
-                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    //    // If we're paused, we already have 
+                    //    // the track set, so just resume playing.
+                        
                     //}
-                    //else
+                    //else if (PlayState.Playing != player.PlayerState)
                     //{
+                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
                     //    player.Play();
                     //}
-
-                    if (player.Track == null)
-                    {
-                        // Load playlist from isolated storage
-                        playlist = Playlist.Load("ColleageEnglishVocaburaryPlaylist.xml");
-
-                        currentTrack = 0;
-                        //player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    }
-
-                    PlayTrack(player);
                     break;
-
+                case UserAction.Stop:
+                    player.Stop();
+                    break;
                 case UserAction.Pause:
                     player.Pause();
                     break;
-
+                case UserAction.FastForward:
+                    player.FastForward();
+                    break;
+                case UserAction.Rewind:
+                    player.Rewind();
+                    break;
                 case UserAction.SkipNext:
-                    //if (currentTrack < playlist.Tracks.Count - 1)
-                    //{
-                    //    currentTrack += 1;
-                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    //}
-                    //else
-                    //{
-                    //    player.Track = null;
-                    //}
+                    if (null != playlist && ++currentTrack >= playlist.Tracks.Count)
+                    {
+                        currentTrack = 0;
+                        player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    }
 
-                    PlayNextTrack(player);
                     break;
 
                 case UserAction.SkipPrevious:
-                    //if (currentTrack > 0)
-                    //{
-                    //    currentTrack -= 1;
-                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    //}
-                    //else
-                    //{
-                    //    player.Track = null;
-                    //}
-
-                    PlayPreviousTrack(player);
+                    if (null != playlist && --currentTrack < 0)
+                    {
+                        currentTrack = playlist.Tracks.Count - 1;
+                        player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                    }
                     break;
 
                 case UserAction.Seek:
@@ -206,20 +164,6 @@ namespace PlaylistFilePlaybackAgent
                     break;
             }
             NotifyComplete();
-        }
-
-        /// <summary>
-        /// Decrements the currentTrackNumber and plays the correpsonding track.
-        /// </summary>
-        /// <param name="player">The BackgroundAudioPlayer</param>
-        private void PlayPreviousTrack(BackgroundAudioPlayer player)
-        {
-            if (--currentTrack < 0)
-            {
-                currentTrack = playlist.Tracks.Count - 1;
-            }
-
-            PlayTrack(player);
         }
 
         /// <summary>
@@ -239,19 +183,14 @@ namespace PlaylistFilePlaybackAgent
 
             if (isFatal)
             {
-                BackgroundErrorNotifier.AddError(error);
                 Abort();
             }
             else
             {
-                BackgroundErrorNotifier.AddError(error);
-
                 // force the track to stop
                 player.Track = null;
                 NotifyComplete();
-            }    
-
-
+            }
         }
 
         /// <summary>

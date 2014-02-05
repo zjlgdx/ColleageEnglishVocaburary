@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Resources;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Navigation;
-using ColleageEnglishVocaburary.ViewModels;
-using Microsoft.Phone.BackgroundAudio;
+using CaptainsLog;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using ColleageEnglishVocaburary.Resources;
@@ -55,31 +53,30 @@ namespace ColleageEnglishVocaburary
                 // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
-
-                
-
             }
-
-            
-
         }
 
         // Code to execute when the application is launching (eg, from Start)
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            var currentUri = FileStorageOperations.LoadFromIsolatedStorage();
+            RootFrame.Navigate(new Uri(currentUri, UriKind.Relative));
         }
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
+
         }
 
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
+            Uri currentUri = RootFrame.CurrentSource;
+            FileStorageOperations.SaveToIsolatedStorage(currentUri.ToString());
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
