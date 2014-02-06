@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using Microsoft.Phone.Controls;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
 
 namespace ColleageEnglishVocaburary
 {
@@ -17,8 +11,6 @@ namespace ColleageEnglishVocaburary
         public WordCard()
         {
             InitializeComponent();
-            //将反面翻转180°
-            //this.myStoryboardX5.Begin();
             this.myStoryboardX1.Completed += new EventHandler(Completed_StoryBoard1);
             this.myStoryboardX3.Completed += new EventHandler(Completed_StoryBoard3);
         }
@@ -28,15 +20,13 @@ namespace ColleageEnglishVocaburary
             if (_isForeground)
             {
                 this.myStoryboardX1.Begin();
-                this._isForeground = false;
-
             }
             else
             {
                 this.myStoryboardX3.Begin();
-                this._isForeground = true;
-
             }
+
+            this._isForeground = !this._isForeground;
         }
 
         private void Completed_StoryBoard1(Object sender, EventArgs e)
