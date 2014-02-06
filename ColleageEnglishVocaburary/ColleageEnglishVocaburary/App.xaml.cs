@@ -60,8 +60,8 @@ namespace ColleageEnglishVocaburary
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-            var currentUri = FileStorageOperations.LoadFromIsolatedStorage();
-            RootFrame.Navigate(new Uri(currentUri, UriKind.Relative));
+          //  var currentUri = FileStorageOperations.LoadFromIsolatedStorage();
+          //  RootFrame.Navigate(new Uri(currentUri, UriKind.Relative));
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -75,8 +75,8 @@ namespace ColleageEnglishVocaburary
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
-            Uri currentUri = RootFrame.CurrentSource;
-            FileStorageOperations.SaveToIsolatedStorage(currentUri.ToString());
+           // Uri currentUri = RootFrame.CurrentSource;
+          //  FileStorageOperations.SaveToIsolatedStorage(currentUri.ToString());
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
