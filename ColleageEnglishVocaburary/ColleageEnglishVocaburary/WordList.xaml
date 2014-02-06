@@ -18,6 +18,10 @@
 
         <shell:ApplicationBar x:Key="DefaultAppBar" IsVisible="True">
             <shell:ApplicationBarIconButton x:Name="mnuSelectMulti" IconUri="/Toolkit.Content/ApplicationBar.Select.png" IsEnabled="True" Text="Select" Click="mnuSelect_Click"/>
+
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Click="menuItem1_Click" Text="播放全部" />
+            </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         
         <shell:ApplicationBar x:Key="PlayAppBar" IsVisible="True">
@@ -43,6 +47,10 @@
                                             Text="next"
                                             IsEnabled="False"
                                             Click="OnNextAppBarButtonClick" />
+
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Click="menuItem1_Click" Text="播放全部" />
+            </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         
         
@@ -91,9 +99,4 @@
         </phone:Panorama>
     </Grid>
     
-    <!--<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True">
-            
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
 </phone:PhoneApplicationPage>

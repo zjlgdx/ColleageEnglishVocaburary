@@ -1,4 +1,6 @@
-﻿using CaptainsLog;
+﻿using System.Collections;
+using System.Linq;
+using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
 using ColleageEnglishVocaburary.ViewModels;
@@ -263,6 +265,12 @@ namespace ColleageEnglishVocaburary
 
         #endregion
 
+        private void menuItem1_Click(object sender, EventArgs e)
+        {
+            SavePlaylist(ViewModel.Words);
+            BackgroundAudioPlayer.Instance.Play();
+        }
+
         private void Word_OnTap(object sender, GestureEventArgs gestureEventArgs)
         {
             var uiElement = sender as TextBlock;
@@ -276,6 +284,7 @@ namespace ColleageEnglishVocaburary
                                 null,
                                 null,
                                 EnabledPlayerControls.Pause);
+            BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
 
@@ -292,6 +301,7 @@ namespace ColleageEnglishVocaburary
                                 null,
                                 null,
                                 EnabledPlayerControls.Pause);
+            BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
 
@@ -358,56 +368,61 @@ namespace ColleageEnglishVocaburary
         {
             if (WordsList.SelectedItems.Count > 0)
             {
-                // Create playlist
-                _playlist = new Playlist();
+                SavePlaylist(WordsList.SelectedItems);
+            }
+            BackgroundAudioPlayer.Instance.Play();
+            playAppBarButton.IsEnabled = false;
+        }
 
-                // Build the playlist
-                int count = 0;
-                foreach (WordViewModel word in WordsList.SelectedItems)
+        private void SavePlaylist(IList words)
+        {
+            // Create playlist
+            _playlist = new Playlist();
+
+            // Build the playlist
+            int count = 0;
+            foreach (WordViewModel word in words)
+            {
+                EnabledPlayerControls playerControls =
+                    EnabledPlayerControls.Pause |
+                    EnabledPlayerControls.SkipPrevious |
+                    EnabledPlayerControls.SkipNext;
+
+                var track = new PlaylistTrack
                 {
-                    EnabledPlayerControls playerControls =
+                    Source = word.WordVoice,
+                    Title = word.Word,
+                    Artist = "College English",
+                    Album = "College English Book",
+                    PlayerControls = playerControls
+                };
+
+                _playlist.Tracks.Add(track);
+
+                count++;
+                if (!string.IsNullOrEmpty(word.SentenceVoice))
+                {
+                    var playerControls2 =
                         EnabledPlayerControls.Pause |
                         EnabledPlayerControls.SkipPrevious |
                         EnabledPlayerControls.SkipNext;
 
-                    var track = new PlaylistTrack
+                    PlaylistTrack track2 = new PlaylistTrack
                     {
-                        Source = word.WordVoice,
-                        Title = word.Word,
+                        Source = word.SentenceVoice,
+                        Title = word.Sentence,
                         Artist = "College English",
                         Album = "College English Book",
-                        PlayerControls = playerControls
+                        PlayerControls = playerControls2
                     };
-
-                    _playlist.Tracks.Add(track);
+                    _playlist.Tracks.Add(track2);
 
                     count++;
-                    if (!string.IsNullOrEmpty(word.SentenceVoice))
-                    {
-                        var playerControls2 =
-                            EnabledPlayerControls.Pause |
-                            EnabledPlayerControls.SkipPrevious |
-                            EnabledPlayerControls.SkipNext;
-
-                        PlaylistTrack track2 = new PlaylistTrack
-                        {
-                            Source = word.SentenceVoice,
-                            Title = word.Sentence,
-                            Artist = "College English",
-                            Album = "College English Book",
-                            PlayerControls = playerControls2
-                        };
-                        _playlist.Tracks.Add(track2);
-
-                        count++;
-                    }
                 }
-
-                // Save it to isolated storage
-                _playlist.Save(_colleageenglishvocaburaryplaylistXml);
             }
-            BackgroundAudioPlayer.Instance.Play();
-            playAppBarButton.IsEnabled = false;
+
+            // Save it to isolated storage
+            _playlist.Save(_colleageenglishvocaburaryplaylistXml);
         }
 
         private void OnPauseAppBarButtonClick(object sender, EventArgs e)
