@@ -1,0 +1,74 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="ColleageEnglishVocaburary.WordCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <toolkit:GestureService.GestureListener>
+                <toolkit:GestureListener Tap="OnTap_Click" />
+            </toolkit:GestureService.GestureListener>
+     
+            <Grid.Resources>
+                <!--正反两面的翻转效果-->
+                <Storyboard x:Name="myStoryboardX1">
+                    <DoubleAnimation Duration="0:0:1" To="90" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
+                </Storyboard>
+                <Storyboard x:Name="myStoryboardX2">
+                    <DoubleAnimation Duration="0:0:1" To="180" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
+                </Storyboard>
+                <Storyboard x:Name="myStoryboardX3">
+                    <DoubleAnimation Duration="0:0:1" To="90" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
+                </Storyboard>
+                <Storyboard x:Name="myStoryboardX4">
+                    <DoubleAnimation Duration="0:0:1" To="0" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
+                </Storyboard>
+
+                <Storyboard x:Name="myStoryboardX5">
+                    <DoubleAnimation Duration="0" From="180" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPhrasePlaneProjection" />
+                </Storyboard>
+            </Grid.Resources>
+            
+            <StackPanel Name="WordStackPanel">
+                <StackPanel.Projection>
+                    <PlaneProjection x:Name="WordPlaneProjection" />
+                </StackPanel.Projection>
+                <TextBlock Text="word" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+            </StackPanel>
+            
+            <StackPanel x:Name="WordPhraseStackPanel" Visibility="Collapsed">
+                <StackPanel.Projection>
+                    <PlaneProjection x:Name="WordPhrasePlaneProjection" />
+                </StackPanel.Projection>
+                <TextBlock Text="wordPhrase" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                <TextBlock Text="sentence"   TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

@@ -123,6 +123,9 @@
     <Compile Include="WebClientExtensions\EAPCommon.cs" />
     <Compile Include="WebClientExtensions\HttpClient.cs" />
     <Compile Include="WebClientExtensions\WebClientExtensions.cs" />
+    <Compile Include="WordCard.xaml.cs">
+      <DependentUpon>WordCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WordList.xaml.cs">
       <DependentUpon>WordList.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WordCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
