@@ -100,6 +100,10 @@ namespace ColleageEnglishVocaburary
                     progressBar1.Value = 0;
                     await DownloadWord(courseId);
                 }
+                else
+                {
+                    NavigateToLearningWord();
+                }
             }
 
             base.OnNavigatedTo(e);
@@ -155,8 +159,15 @@ namespace ColleageEnglishVocaburary
 
             ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE;
 
-            // 
-            NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + NavigationContext.QueryString["courseId"], UriKind.Relative));
+            NavigateToLearningWord();
+        }
+
+        private void NavigateToLearningWord()
+        {
+// 
+            //NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + NavigationContext.QueryString["courseId"], UriKind.Relative));
+            NavigationService.Navigate(new Uri("/WordCard.xaml?courseId=" + NavigationContext.QueryString["courseId"],
+                UriKind.Relative));
         }
 
         private static async Task FetchMedia(string paragraph,
