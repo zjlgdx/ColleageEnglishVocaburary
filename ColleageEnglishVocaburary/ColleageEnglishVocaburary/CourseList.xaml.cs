@@ -141,7 +141,7 @@ namespace ColleageEnglishVocaburary
         private void Course_OnTap(object sender, GestureEventArgs gestureEventArgs)
         {
             var ui = sender as Image;
-            NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + (string)ui.Tag, UriKind.Relative));
+            NavigationService.Navigate(new Uri("/DownloadVocaburary.xaml?courseId=" + (string)ui.Tag, UriKind.Relative));
         }
 
         private string GetBookName(string bookId)

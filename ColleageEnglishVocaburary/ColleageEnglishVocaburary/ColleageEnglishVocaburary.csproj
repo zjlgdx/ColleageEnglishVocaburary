@@ -100,6 +100,9 @@
     <Compile Include="CourseList.xaml.cs">
       <DependentUpon>CourseList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DownloadVocaburary.xaml.cs">
+      <DependentUpon>DownloadVocaburary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\Book.cs" />
     <Compile Include="Model\Course.cs" />
     <Compile Include="DBCSEncoding.cs" />
@@ -140,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CourseList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DownloadVocaburary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
