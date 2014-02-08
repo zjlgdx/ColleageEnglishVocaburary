@@ -1,33 +1,32 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Navigation;
-using ColleageEnglishVocaburary.ViewModels;
+﻿using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
 using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace ColleageEnglishVocaburary
 {
-    public partial class WordCard : PhoneApplicationPage, INotifyPropertyChanged
+    public partial class WordCard : PhoneApplicationPage
     {
         bool _isForeground = true;
 
-        private CourseViewModel viewModel = null;
-
         private int index;
 
-        private WordViewModel _word;
-        public WordViewModel Word
+        private CourseViewModel viewModel = null;
+
+        private WordViewModel _learningWord;
+        public WordViewModel LearningWord
         {
             get
             {
-                return _word;
+                // Delay creation of the view model until necessary
+                if (_learningWord == null)
+                    _learningWord = new WordViewModel();
+
+                return _learningWord;
             }
-            set { this.SetProperty(ref this._word, value); }
         }
 
         /// <summary>
@@ -50,7 +49,7 @@ namespace ColleageEnglishVocaburary
         {
             InitializeComponent();
 
-            DataContext = Word;
+            DataContext = LearningWord;
 
             this.myStoryboardX1.Completed += new EventHandler(Completed_StoryBoard1);
             this.myStoryboardX3.Completed += new EventHandler(Completed_StoryBoard3);
@@ -137,7 +136,14 @@ namespace ColleageEnglishVocaburary
             {
                 index--;
             }
-            Word = ViewModel.Words[index];
+
+            var learningWord = ViewModel.Words[index];
+
+            SetWordCardProperties(learningWord.Word,
+                learningWord.WordVoice,
+                learningWord.WordPhrase,
+                learningWord.Sentence,
+                learningWord.SentenceVoice);
         }
 
         private void UINext_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -150,30 +156,24 @@ namespace ColleageEnglishVocaburary
             {
                 index++;
             }
-            Word = ViewModel.Words[index];
+            var learningWord = ViewModel.Words[index];
+
+            SetWordCardProperties(learningWord.Word,
+                learningWord.WordVoice,
+                learningWord.WordPhrase,
+                learningWord.Sentence,
+                learningWord.SentenceVoice);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        private void SetWordCardProperties(String word, String wordVoice, String wordPhrase, String sentence, String sentenceVoice)
         {
-            if (object.Equals(storage, value))
-            {
-                return false;
-            }
-
-            storage = value;
-            this.OnPropertyChanged(propertyName);
-            return true;
+            LearningWord.Word = word;
+            LearningWord.WordVoice = wordVoice;
+            LearningWord.WordPhrase = wordPhrase;
+            LearningWord.Sentence = sentence;
+            LearningWord.SentenceVoice = sentenceVoice;
         }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var eventHandler = this.PropertyChanged;
-            if (eventHandler != null)
-            {
-                eventHandler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        
     }
 }
