@@ -19,6 +19,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="0.5*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -33,7 +34,7 @@
             <toolkit:GestureService.GestureListener>
                 <toolkit:GestureListener DoubleTap="GestureListener_OnDoubleTap" />
             </toolkit:GestureService.GestureListener>
-     
+
             <Grid.Resources>
                 <!--正反两面的翻转效果-->
                 <Storyboard x:Name="myStoryboardX1">
@@ -52,26 +53,40 @@
                 <Storyboard x:Name="myStoryboardX5">
                     <DoubleAnimation Duration="0" From="180" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPhrasePlaneProjection" />
                 </Storyboard>
+               
             </Grid.Resources>
 
             <StackPanel Name="WordStackPanel">
                 <StackPanel.Projection>
                     <PlaneProjection x:Name="WordPlaneProjection" />
                 </StackPanel.Projection>
-                <TextBlock Name="WordTextBlock" Text="{Binding Word}" Tag="{Binding WordVoice}" Tap="UIWord_OnTap" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                <Border BorderBrush="OrangeRed"  Background="SeaGreen">
+                    <TextBlock Name="WordTextBlock" Text="{Binding Word}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                </Border>
             </StackPanel>
 
             <StackPanel x:Name="WordPhraseStackPanel" Visibility="Collapsed">
                 <StackPanel.Projection>
                     <PlaneProjection x:Name="WordPhrasePlaneProjection" />
                 </StackPanel.Projection>
-                <TextBlock Text="{Binding WordPhrase}" Tap="UISentence_OnTap" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
-                <TextBlock Text="{Binding Sentence}" Tap="UISentence_OnTap" Tag="{Binding SentenceVoice}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                <Border BorderBrush="OrangeRed"  Background="SeaGreen">
+                    <StackPanel>
+                        <TextBlock Text="{Binding WordPhrase}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                        <TextBlock Text="{Binding Sentence}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
-            
-        </Grid>
 
-        <Grid Grid.Row="2" Margin="0,0,0,15">
+        </Grid>
+        <Grid Grid.Row="2">
+            <Ellipse Fill="Blue" Tap="UIRead_OnTap"  
+    Height="100" 
+    Width="100">
+
+            </Ellipse>
+
+        </Grid>
+        <Grid Grid.Row="3" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>

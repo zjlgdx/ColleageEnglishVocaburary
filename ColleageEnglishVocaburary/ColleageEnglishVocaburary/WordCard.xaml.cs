@@ -92,42 +92,9 @@ namespace ColleageEnglishVocaburary
             this._isForeground = !this._isForeground;
         }
 
-        private void UIWord_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            var uiElement = sender as TextBlock;
-            var voice = (string)uiElement.Tag;
-            var word = uiElement.Text;
-            var audioTrack =
-                new AudioTrack(new Uri(voice, UriKind.Relative),
-                                word,
-                                word,
-                                word,
-                                null,
-                                null,
-                                EnabledPlayerControls.Pause);
-            BackgroundAudioPlayer.Instance.Stop();
-            BackgroundAudioPlayer.Instance.Track = audioTrack;
-        }
-
-        private void UISentence_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            var uiElement = sender as TextBlock;
-            var voice = (string)uiElement.Tag;
-            var sentence = uiElement.Text;
-            var audioTrack =
-                new AudioTrack(new Uri(voice, UriKind.Relative),
-                                sentence,
-                                sentence,
-                                sentence,
-                                null,
-                                null,
-                                EnabledPlayerControls.Pause);
-            BackgroundAudioPlayer.Instance.Stop();
-            BackgroundAudioPlayer.Instance.Track = audioTrack;
-        }
-
         private void UIPrevious_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            //_isForeground = true;
             if (index == 0)
             {
                 index = ViewModel.Words.Count -1;
@@ -148,6 +115,7 @@ namespace ColleageEnglishVocaburary
 
         private void UINext_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+           // _isForeground = true;
             if (index == ViewModel.Words.Count -1)
             {
                 index = 0;
@@ -165,7 +133,6 @@ namespace ColleageEnglishVocaburary
                 learningWord.SentenceVoice);
         }
 
-
         private void SetWordCardProperties(String word, String wordVoice, String wordPhrase, String sentence, String sentenceVoice)
         {
             LearningWord.Word = word;
@@ -174,6 +141,21 @@ namespace ColleageEnglishVocaburary
             LearningWord.Sentence = sentence;
             LearningWord.SentenceVoice = sentenceVoice;
         }
-        
+
+        private void UIRead_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;// (string)uiElement.Tag;
+            var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;// uiElement.Text;
+            var audioTrack =
+                new AudioTrack(new Uri(voice, UriKind.Relative),
+                                text,
+                                text,
+                                text,
+                                null,
+                                null,
+                                EnabledPlayerControls.Pause);
+            BackgroundAudioPlayer.Instance.Stop();
+            BackgroundAudioPlayer.Instance.Track = audioTrack;
+        }
     }
 }
