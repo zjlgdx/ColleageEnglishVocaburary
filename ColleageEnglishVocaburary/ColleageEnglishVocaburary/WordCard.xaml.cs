@@ -53,6 +53,7 @@ namespace ColleageEnglishVocaburary
             InitializeComponent();
 
             DataContext = LearningWord;
+            HeadStackPanel.DataContext = ViewModel;
 
             this.myStoryboardX1.Completed += new EventHandler(Completed_StoryBoard1);
             this.myStoryboardX3.Completed += new EventHandler(Completed_StoryBoard3);
