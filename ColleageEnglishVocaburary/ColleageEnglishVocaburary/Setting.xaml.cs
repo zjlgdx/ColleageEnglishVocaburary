@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Navigation;
 using CaptainsLog;
+using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 
@@ -14,9 +17,12 @@ namespace ColleageEnglishVocaburary
 {
     public partial class Setting : PhoneApplicationPage
     {
+        private LearningTypeViewModel _learningTypeViewModel;
         public Setting()
         {
             InitializeComponent();
+
+            _learningTypeViewModel = new LearningTypeViewModel();
             this.Loaded += Setting_Loaded;
            
         }
@@ -104,6 +110,37 @@ namespace ColleageEnglishVocaburary
             {
                 NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + NavigationContext.QueryString["courseId"], UriKind.Relative));
             }
+        }
+    }
+
+    public class LearningTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || value.ToString().Equals(""))
+            {
+                return false;
+            }
+
+            return value.ToString().Equals(Constants.WORD_CARD, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+        }
+    }
+
+    public class AutoReadingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var autoReading = (bool) value;
+            return autoReading ? "开启" : "关闭";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

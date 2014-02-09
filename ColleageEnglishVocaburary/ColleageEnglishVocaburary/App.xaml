@@ -13,6 +13,7 @@
         <local:IsoImageConverter x:Key="IsoImageCoverter"/>
         <local:EmptyOrNullConverter x:Key="EmptyOrNullConverter" />
         
+        
         <sys:Double x:Key="PanoramaItemHeaderFontSize">66</sys:Double>
         
         <Style x:Key="PanoramaItemHeaderTextStyle" TargetType="TextBlock">
