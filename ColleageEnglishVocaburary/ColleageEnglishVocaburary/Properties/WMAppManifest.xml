@@ -22,7 +22,7 @@
           <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileSmall.png</SmallImageURI>
           <Count>0</Count>
           <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileMedium.png</BackgroundImageURI>
-          <Title>ColleageEnglishVocaburary</Title>
+          <Title>大学英语综合教程</Title>
           <BackContent>
           </BackContent>
           <BackBackgroundImageURI>
