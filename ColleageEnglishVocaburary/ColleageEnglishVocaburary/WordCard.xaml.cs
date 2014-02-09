@@ -94,6 +94,10 @@ namespace ColleageEnglishVocaburary
         {
             var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;
             var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;
+            if (string.IsNullOrWhiteSpace(voice))
+            {
+                return;
+            }
             var audioTrack =
                 new AudioTrack(new Uri(voice, UriKind.Relative),
                                 text,
