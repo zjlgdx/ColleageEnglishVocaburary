@@ -19,20 +19,20 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.5*"/>
+
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Text="大学英语综合教程" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="词汇" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <toolkit:GestureService.GestureListener>
-                <toolkit:GestureListener DoubleTap="GestureListener_OnDoubleTap" />
+                <toolkit:GestureListener Tap="GestureListener_OnTap" />
             </toolkit:GestureService.GestureListener>
 
             <Grid.Resources>
@@ -53,51 +53,54 @@
                 <Storyboard x:Name="myStoryboardX5">
                     <DoubleAnimation Duration="0" From="180" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPhrasePlaneProjection" />
                 </Storyboard>
-               
+
             </Grid.Resources>
 
-            <StackPanel Name="WordStackPanel">
-                <StackPanel.Projection>
+            <Grid Name="WordStackPanel">
+                <Grid.Projection>
                     <PlaneProjection x:Name="WordPlaneProjection" />
-                </StackPanel.Projection>
-                <Border BorderBrush="OrangeRed"  Background="SeaGreen">
-                    <TextBlock Name="WordTextBlock" Text="{Binding Word}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+                </Grid.Projection>
+                <Border BorderBrush="#E36FAB" CornerRadius="15" Background="Teal" BorderThickness="3"  Margin="10" >
+                    <TextBlock Name="WordTextBlock" Text="{Binding Word}" VerticalAlignment="Center"  HorizontalAlignment="Center"  TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
                 </Border>
-            </StackPanel>
+            </Grid>
 
-            <StackPanel x:Name="WordPhraseStackPanel" Visibility="Collapsed">
-                <StackPanel.Projection>
+            <Grid x:Name="WordPhraseStackPanel" Visibility="Collapsed">
+                <Grid.Projection>
                     <PlaneProjection x:Name="WordPhrasePlaneProjection" />
-                </StackPanel.Projection>
-                <Border BorderBrush="OrangeRed"  Background="SeaGreen">
-                    <StackPanel>
-                        <TextBlock Text="{Binding WordPhrase}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
-                        <TextBlock Text="{Binding Sentence}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
-                    </StackPanel>
+                </Grid.Projection>
+                <Border BorderBrush="#E36FAB" CornerRadius="15" Background="Teal"  BorderThickness="3"  Margin="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" BorderBrush="#FF8800" BorderThickness="0,0,0,3">
+                            <TextBlock Text="{Binding WordPhrase}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextLargeStyle}" FontSize="{StaticResource PhoneFontSizeMediumLarge}" />
+                        </Border>
+
+                        <Border Grid.Row="1">
+                            <TextBlock Text="{Binding Sentence}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextLargeStyle}" FontSize="{StaticResource PhoneFontSizeMediumLarge}" />
+                        </Border>
+                    </Grid>
                 </Border>
-            </StackPanel>
-
+            </Grid>
         </Grid>
-        <Grid Grid.Row="2">
-            <Ellipse Fill="Blue" Tap="UIRead_OnTap"  
-    Height="100" 
-    Width="100">
 
-            </Ellipse>
-
-        </Grid>
-        <Grid Grid.Row="3" Margin="0,0,0,15">
+        <Grid Grid.Row="2" Margin="0,0,0,15" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Tap="UIPrevious_OnTap" Background="SeaGreen" Margin="0,0,10,0">
-                <TextBlock TextAlignment="Center">上一个</TextBlock>
+            <Border Grid.Column="0" Tap="UIPrevious_OnTap" Background="#1C4A85" Margin="0,0,10,0">
+                <TextBlock TextAlignment="Center" FontSize="{StaticResource PhoneFontSizeExtraLarge}">上一个</TextBlock>
             </Border>
-            <Border Grid.Column="1" Tap="UINext_OnTap" Background="SeaGreen" Margin="10,0,0,0">
-                <TextBlock  TextAlignment="Center">下一个</TextBlock>
+            <Ellipse Fill="Blue"  Grid.Column="1" Tap="UIRead_OnTap" Height="50" Width="50"/>
+            <Border Grid.Column="2" Tap="UINext_OnTap" Background="#1C4A85" Margin="10,0,0,0">
+                <TextBlock  TextAlignment="Center" FontSize="{StaticResource PhoneFontSizeExtraLarge}">下一个</TextBlock>
             </Border>
-
         </Grid>
     </Grid>
 

@@ -78,18 +78,20 @@ namespace ColleageEnglishVocaburary
             this.myStoryboardX4.Begin();
         }
 
-        private void GestureListener_OnDoubleTap(object sender, GestureEventArgs e)
+        private void GestureListener_OnTap(object sender, GestureEventArgs e)
         {
-            if (_isForeground)
-            {
-                this.myStoryboardX1.Begin();
-            }
-            else
-            {
-                this.myStoryboardX3.Begin();
-            }
-
-            this._isForeground = !this._isForeground;
+            var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;// (string)uiElement.Tag;
+            var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;// uiElement.Text;
+            var audioTrack =
+                new AudioTrack(new Uri(voice, UriKind.Relative),
+                                text,
+                                text,
+                                text,
+                                null,
+                                null,
+                                EnabledPlayerControls.Pause);
+            BackgroundAudioPlayer.Instance.Stop();
+            BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
 
         private void UIPrevious_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -144,18 +146,18 @@ namespace ColleageEnglishVocaburary
 
         private void UIRead_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;// (string)uiElement.Tag;
-            var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;// uiElement.Text;
-            var audioTrack =
-                new AudioTrack(new Uri(voice, UriKind.Relative),
-                                text,
-                                text,
-                                text,
-                                null,
-                                null,
-                                EnabledPlayerControls.Pause);
-            BackgroundAudioPlayer.Instance.Stop();
-            BackgroundAudioPlayer.Instance.Track = audioTrack;
+            if (_isForeground)
+            {
+                this.myStoryboardX1.Begin();
+            }
+            else
+            {
+                this.myStoryboardX3.Begin();
+            }
+
+            this._isForeground = !this._isForeground;
+
+            
         }
     }
 }
