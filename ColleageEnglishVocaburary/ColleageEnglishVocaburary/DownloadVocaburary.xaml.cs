@@ -173,10 +173,22 @@ namespace ColleageEnglishVocaburary
 
         private void NavigateToLearningWord()
         {
-// 
-            //NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + NavigationContext.QueryString["courseId"], UriKind.Relative));
-            NavigationService.Navigate(new Uri("/WordCard.xaml?courseId=" + NavigationContext.QueryString["courseId"],
-                UriKind.Relative));
+            string learningStyle = "列表式";
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("LearningStyle"))
+            {
+                learningStyle =
+                IsolatedStorageSettings.ApplicationSettings["LearningStyle"] as string;
+            }
+
+            if (learningStyle == "列表式")
+            {
+                NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + NavigationContext.QueryString["courseId"], UriKind.Relative));
+            }
+            else
+            {
+                NavigationService.Navigate(new Uri("/WordCard.xaml?courseId=" + NavigationContext.QueryString["courseId"],
+                               UriKind.Relative));
+            }
         }
 
         private static async Task FetchMedia(string paragraph,

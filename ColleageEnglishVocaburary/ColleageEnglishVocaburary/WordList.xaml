@@ -21,6 +21,7 @@
 
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Click="menuItem1_Click" Text="播放全部" />
+                <shell:ApplicationBarMenuItem Click="ApplicationBarMenuItemSetting_OnClick"  Text="设置" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         
@@ -50,6 +51,7 @@
 
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Click="menuItem1_Click" Text="播放全部" />
+                <shell:ApplicationBarMenuItem Click="ApplicationBarMenuItemSetting_OnClick"  Text="设置" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         

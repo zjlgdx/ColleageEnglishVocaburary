@@ -14,6 +14,8 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
+    
+
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
@@ -32,7 +34,7 @@
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <toolkit:GestureService.GestureListener>
-                <toolkit:GestureListener Tap="GestureListener_OnTap" />
+                <toolkit:GestureListener Tap="ReadWord_OnTap" />
             </toolkit:GestureService.GestureListener>
 
             <Grid.Resources>
@@ -97,11 +99,17 @@
             <Border Grid.Column="0" Tap="UIPrevious_OnTap" Background="#1C4A85" Margin="0,0,10,0">
                 <TextBlock TextAlignment="Center" FontSize="{StaticResource PhoneFontSizeExtraLarge}">上一个</TextBlock>
             </Border>
-            <Ellipse Fill="Blue"  Grid.Column="1" Tap="UIRead_OnTap" Height="50" Width="50"/>
+            <Ellipse Fill="Blue"  Grid.Column="1" Tap="UITransform_OnTap" Height="50" Width="50"/>
             <Border Grid.Column="2" Tap="UINext_OnTap" Background="#1C4A85" Margin="10,0,0,0">
                 <TextBlock  TextAlignment="Center" FontSize="{StaticResource PhoneFontSizeExtraLarge}">下一个</TextBlock>
             </Border>
         </Grid>
     </Grid>
 
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True">
+            <shell:ApplicationBarIconButton IconUri="/Assets/feature.settings.png" Click="ApplicationBarIconButton_OnClick"  Text="设置"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

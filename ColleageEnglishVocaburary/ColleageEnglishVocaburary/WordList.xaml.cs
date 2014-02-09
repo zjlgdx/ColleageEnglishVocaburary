@@ -239,6 +239,11 @@ namespace ColleageEnglishVocaburary
             nextAppBarButton.IsEnabled = false;
         }
 
-        
+
+        private void ApplicationBarMenuItemSetting_OnClick(object sender, EventArgs e)
+        {
+            string courseId = NavigationContext.QueryString["courseId"];
+            NavigationService.Navigate(new Uri("/Setting.xaml?courseId=" + courseId, UriKind.Relative));
+        }
     }
 }

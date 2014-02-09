@@ -1,4 +1,5 @@
-﻿using ColleageEnglishVocaburary.ViewModels;
+﻿using System.IO.IsolatedStorage;
+using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
 using System;
@@ -13,6 +14,8 @@ namespace ColleageEnglishVocaburary
         bool _isForeground = true;
 
         private int index;
+
+        private bool readingWord;
 
         private CourseViewModel viewModel = null;
 
@@ -57,11 +60,20 @@ namespace ColleageEnglishVocaburary
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+
             string courseId = NavigationContext.QueryString["courseId"];
             ViewModel.CourseId = courseId.Replace("/", "_");
 
             await ViewModel.LoadData();
-            base.OnNavigatedTo(e);
+
+            string readWord = "No";
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("ReadWord"))
+            {
+                readWord = IsolatedStorageSettings.ApplicationSettings["ReadWord"] as string;
+            }
+
+            readingWord = (readWord == "Yes");
         }
 
         private void Completed_StoryBoard1(Object sender, EventArgs e)
@@ -78,10 +90,10 @@ namespace ColleageEnglishVocaburary
             this.myStoryboardX4.Begin();
         }
 
-        private void GestureListener_OnTap(object sender, GestureEventArgs e)
+        private void ReadWord()
         {
-            var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;// (string)uiElement.Tag;
-            var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;// uiElement.Text;
+            var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;
+            var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;
             var audioTrack =
                 new AudioTrack(new Uri(voice, UriKind.Relative),
                                 text,
@@ -92,6 +104,11 @@ namespace ColleageEnglishVocaburary
                                 EnabledPlayerControls.Pause);
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
+        }
+
+        private void ReadWord_OnTap(object sender, GestureEventArgs e)
+        {
+            ReadWord();
         }
 
         private void UIPrevious_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -113,6 +130,11 @@ namespace ColleageEnglishVocaburary
                 learningWord.WordPhrase,
                 learningWord.Sentence,
                 learningWord.SentenceVoice);
+
+            if (readingWord)
+            {
+                ReadWord();
+            }
         }
 
         private void UINext_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -133,6 +155,11 @@ namespace ColleageEnglishVocaburary
                 learningWord.WordPhrase,
                 learningWord.Sentence,
                 learningWord.SentenceVoice);
+
+            if (readingWord)
+            {
+                ReadWord();
+            }
         }
 
         private void SetWordCardProperties(String word, String wordVoice, String wordPhrase, String sentence, String sentenceVoice)
@@ -144,7 +171,7 @@ namespace ColleageEnglishVocaburary
             LearningWord.SentenceVoice = sentenceVoice;
         }
 
-        private void UIRead_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
+        private void UITransform_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             if (_isForeground)
             {
@@ -157,7 +184,16 @@ namespace ColleageEnglishVocaburary
 
             this._isForeground = !this._isForeground;
 
-            
+            if (readingWord)
+            {
+                ReadWord();
+            }
+        }
+
+        private void ApplicationBarIconButton_OnClick(object sender, EventArgs e)
+        {
+            string courseId = NavigationContext.QueryString["courseId"];
+            NavigationService.Navigate(new Uri("/Setting.xaml?courseId=" + courseId, UriKind.Relative));
         }
     }
 }
