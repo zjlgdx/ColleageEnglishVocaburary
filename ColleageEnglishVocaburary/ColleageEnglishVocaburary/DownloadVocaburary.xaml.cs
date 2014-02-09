@@ -91,7 +91,16 @@ namespace ColleageEnglishVocaburary
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
             string courseId = NavigationContext.QueryString["courseId"];
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                var bookId = courseId.Substring(0, 1);
+                NavigationService.Navigate(new Uri("/CourseList.xaml?bookId=" + bookId, UriKind.Relative));
+                return;
+            }
+            
+           
             ViewModel.CourseId = courseId.Replace("/", "_");
             using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
@@ -106,7 +115,7 @@ namespace ColleageEnglishVocaburary
                 }
             }
 
-            base.OnNavigatedTo(e);
+            
         }
 
         #region FetchWords
