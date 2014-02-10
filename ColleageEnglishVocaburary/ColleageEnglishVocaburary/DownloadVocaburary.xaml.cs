@@ -60,7 +60,7 @@ namespace ColleageEnglishVocaburary
 
         private const string WORD_PHRASE_PATTERN = @"(?is)<(br)\b[^>]*>((?!<font\s+color=""#336600""\s*>).)*";
         private const string SENTENCE_PATTERN = @"(?<=<font\s+color=""#336600""\s*>).*";
-        
+
 
         #endregion
 
@@ -95,27 +95,17 @@ namespace ColleageEnglishVocaburary
             string courseId = NavigationContext.QueryString["courseId"];
             if (e.NavigationMode == NavigationMode.Back)
             {
-                var bookId = courseId.Substring(0, 1);
-                NavigationService.Navigate(new Uri("/CourseList.xaml?bookId=" + bookId, UriKind.Relative));
+                //var bookId = courseId.Substring(0, 1);
+                //NavigationService.Navigate(new Uri("/CourseList.xaml?bookId=" + bookId, UriKind.Relative));
+
+                NavigationService.GoBack();
                 return;
             }
-            
-           
-            ViewModel.CourseId = courseId.Replace("/", "_");
-            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
-            {
-                if (!storage.FileExists(ViewModel.CourseId))
-                {
-                    progressBar1.Value = 0;
-                    await DownloadWord(courseId);
-                }
-                else
-                {
-                    NavigateToLearningWord();
-                }
-            }
 
-            
+            ViewModel.CourseId = courseId.Replace("/", "_");
+
+            progressBar1.Value = 0;
+            await DownloadWord(courseId);
         }
 
         #region FetchWords

@@ -32,5 +32,11 @@ namespace ColleageEnglishVocaburary
         {
             NavigationService.Navigate(new Uri("/CourseList.xaml?bookId=4", UriKind.Relative));
         }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+           // NavigationService.g
+        }
     }
 }

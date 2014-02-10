@@ -118,6 +118,14 @@ namespace ColleageEnglishVocaburary
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+          //  return;
+            //if (e.NavigationMode == NavigationMode.Back)
+            //{
+            //    NavigationService.Navigate(new Uri("/BookList.xaml", UriKind.Relative));
+            //    return;
+            //}
+
             string bookId = NavigationContext.QueryString["bookId"];
 
             ViewModel.BookId = string.Format(COLLEAGE_ENGLISH_VOCABURARY_BOOK_ID, bookId);
@@ -135,13 +143,40 @@ namespace ColleageEnglishVocaburary
             await ViewModel.LoadData();
             downloadListStatus.Visibility = Visibility.Collapsed;
             CourseListItem.Visibility = Visibility.Visible;
-            base.OnNavigatedTo(e);
+            
         }
 
         private void Course_OnTap(object sender, GestureEventArgs gestureEventArgs)
         {
             var ui = sender as Image;
-            NavigationService.Navigate(new Uri("/DownloadVocaburary.xaml?courseId=" + (string)ui.Tag, UriKind.Relative));
+            var courseId = (string) ui.Tag;
+
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                if (storage.FileExists(courseId.Replace("/", "_")))
+                {
+                    NavigateToLearningWord(courseId);
+                }
+                else
+                {
+                    NavigationService.Navigate(new Uri("/DownloadVocaburary.xaml?courseId=" + courseId, UriKind.Relative));
+                }
+            }
+        }
+
+        private void NavigateToLearningWord(string courseId)
+        {
+            var appSettings = new AppSettings();
+
+            if (appSettings.LearningTypeSetting.Equals(Constants.WORD_LIST))
+            {
+                NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + courseId, UriKind.Relative));
+            }
+            else
+            {
+                NavigationService.Navigate(new Uri("/WordCard.xaml?courseId=" + courseId,
+                               UriKind.Relative));
+            }
         }
 
         private string GetBookName(string bookId)
