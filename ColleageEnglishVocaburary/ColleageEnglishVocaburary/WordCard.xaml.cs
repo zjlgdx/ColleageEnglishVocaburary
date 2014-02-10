@@ -68,13 +68,9 @@ namespace ColleageEnglishVocaburary
 
             await ViewModel.LoadData();
 
-            string readWord = "No";
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("ReadWord"))
-            {
-                readWord = IsolatedStorageSettings.ApplicationSettings["ReadWord"] as string;
-            }
+            var appSettings = new AppSettings();
 
-            readingWord = (readWord == "Yes");
+            readingWord = appSettings.AutoReadingSetting;
         }
 
         private void Completed_StoryBoard1(Object sender, EventArgs e)

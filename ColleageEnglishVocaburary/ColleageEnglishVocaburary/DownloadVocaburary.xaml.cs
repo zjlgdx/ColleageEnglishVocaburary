@@ -173,14 +173,9 @@ namespace ColleageEnglishVocaburary
 
         private void NavigateToLearningWord()
         {
-            string learningStyle = "列表式";
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("LearningStyle"))
-            {
-                learningStyle =
-                IsolatedStorageSettings.ApplicationSettings["LearningStyle"] as string;
-            }
+            var appSettings = new AppSettings();
 
-            if (learningStyle == "列表式")
+            if (appSettings.LearningTypeSetting.Equals(Constants.WORD_LIST))
             {
                 NavigationService.Navigate(new Uri("/WordList.xaml?courseId=" + NavigationContext.QueryString["courseId"], UriKind.Relative));
             }
