@@ -178,6 +178,7 @@ namespace ColleageEnglishVocaburary
             {
                 SavePlaylist(WordsList.SelectedItems);
             }
+            BackgroundAudioPlayer.Instance.Track = null;
             BackgroundAudioPlayer.Instance.Play();
             playAppBarButton.IsEnabled = false;
         }

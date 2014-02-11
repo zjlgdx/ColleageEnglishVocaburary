@@ -65,7 +65,7 @@ namespace PlaylistFilePlaybackAgent
 
                     if (player.Track == null)
                     {
-                        if (playlist == null)
+                        if (playlist == null || playlist.Tracks.Count == 0)
                         {
                             // Load playlist from isolated storage
                             playlist = Playlist.Load(_colleageenglishvocaburaryplaylistXml);
