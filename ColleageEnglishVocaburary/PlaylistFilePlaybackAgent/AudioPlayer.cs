@@ -1,4 +1,5 @@
-﻿using Microsoft.Phone.BackgroundAudio;
+﻿using System.Collections.Generic;
+using Microsoft.Phone.BackgroundAudio;
 using System;
 using System.Windows;
 
@@ -70,18 +71,45 @@ namespace PlaylistFilePlaybackAgent
                             playlist = Playlist.Load(_colleageenglishvocaburaryplaylistXml);
 
                             currentTrack = 0;
-                        }
 
-                        
+                            if (playlist.Tracks.Count == 0)
+                            {
+                                player.Track = null;
+                                break;
+                            }
+                            else
+                            {
+                                player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                                break;
+                            }
+                        }
                     }
 
+                    if (playlist != null && player.Track != null && player.Track.Tag == "S")
+                    {
+                        System.Diagnostics.Debug.WriteLine("play single");
+                        playlist.Tracks= new List<PlaylistTrack>();
+                        playlist.Save(_colleageenglishvocaburaryplaylistXml);
+                        player.Track = null;
+                        break;
+                    }
+
+                    if (null != playlist && playlist.Tracks.Count ==0)
+                    {
+                        player.Track = null;
+                        break;
+                    }
 
                     if (null != playlist && ++currentTrack >= playlist.Tracks.Count)
                     {
                         currentTrack = 0;
                     }
 
-                    player.Track = playlist == null ? null : playlist.Tracks[currentTrack].ToAudioTrack();
+                    if (null != playlist)
+                    {
+                        player.Track = playlist == null ? null : playlist.Tracks[currentTrack].ToAudioTrack();
+                    }
+                   
                     System.Diagnostics.Debug.WriteLine("TrackEnded:" + (player.Track == null));
                     System.Diagnostics.Debug.WriteLine("currentTrack:" + currentTrack);
                     break;
@@ -118,17 +146,7 @@ namespace PlaylistFilePlaybackAgent
                     }
                   
                     System.Diagnostics.Debug.WriteLine("player.Play()" );
-                    //if (PlayState.Paused == player.PlayerState)
-                    //{
-                    //    // If we're paused, we already have 
-                    //    // the track set, so just resume playing.
-                        
-                    //}
-                    //else if (PlayState.Playing != player.PlayerState)
-                    //{
-                    //    player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                    //    player.Play();
-                    //}
+                   
                     break;
                 case UserAction.Stop:
                     player.Stop();

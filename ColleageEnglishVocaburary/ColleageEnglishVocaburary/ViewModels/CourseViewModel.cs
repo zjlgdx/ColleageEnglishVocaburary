@@ -1,4 +1,5 @@
-﻿using ColleageEnglishVocaburary.Model;
+﻿using System.Linq;
+using ColleageEnglishVocaburary.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace ColleageEnglishVocaburary.ViewModels
         public CourseViewModel()
         {
             this.Words = new ObservableCollection<WordViewModel>();
+            this.LearningWord = new WordViewModel();
         }
 
         public async Task LoadData()
@@ -35,6 +37,17 @@ namespace ColleageEnglishVocaburary.ViewModels
                         SentenceVoice = word.SentenceVoice,
                         WordVoice = word.WordVoice
                     });
+            }
+
+            var learingWord = course.NewWords.FirstOrDefault();
+            if (learingWord != null)
+            {
+                this.LearningWord.WordId = learingWord.WordId;
+                this.LearningWord.Word = learingWord.Word;
+                this.LearningWord.WordPhrase = learingWord.WordPhrase;
+                this.LearningWord.Sentence = learingWord.Sentence;
+                this.LearningWord.SentenceVoice = learingWord.SentenceVoice;
+                this.LearningWord.WordVoice = learingWord.WordVoice;
             }
         }
 
@@ -70,6 +83,8 @@ namespace ColleageEnglishVocaburary.ViewModels
         /// A collection for ItemViewModel objects.
         /// </summary>
         public ObservableCollection<WordViewModel> Words { get; private set; }
+
+        public WordViewModel LearningWord { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

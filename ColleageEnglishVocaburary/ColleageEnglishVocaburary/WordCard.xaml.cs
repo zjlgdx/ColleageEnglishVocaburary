@@ -1,4 +1,5 @@
 ﻿using System.IO.IsolatedStorage;
+using System.Linq;
 using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
@@ -18,19 +19,6 @@ namespace ColleageEnglishVocaburary
         private bool readingWord;
 
         private CourseViewModel viewModel = null;
-
-        private WordViewModel _learningWord;
-        public WordViewModel LearningWord
-        {
-            get
-            {
-                // Delay creation of the view model until necessary
-                if (_learningWord == null)
-                    _learningWord = new WordViewModel();
-
-                return _learningWord;
-            }
-        }
 
         /// <summary>
         /// A static ViewModel used by the views to bind against.
@@ -52,11 +40,27 @@ namespace ColleageEnglishVocaburary
         {
             InitializeComponent();
 
-            DataContext = LearningWord;
+            DataContext = ViewModel.LearningWord;
             HeadStackPanel.DataContext = ViewModel;
 
             this.myStoryboardX1.Completed += new EventHandler(Completed_StoryBoard1);
             this.myStoryboardX3.Completed += new EventHandler(Completed_StoryBoard3);
+
+            this.Loaded += WordCard_Loaded;
+        }
+
+        void WordCard_Loaded(object sender, RoutedEventArgs e)
+        {
+            var learningWord = ViewModel.Words.FirstOrDefault();
+
+            if (learningWord != null)
+            { 
+                SetWordCardProperties(learningWord.Word,
+                    learningWord.WordVoice,
+                    learningWord.WordPhrase,
+                    learningWord.Sentence,
+                    learningWord.SentenceVoice);
+            }
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -89,8 +93,8 @@ namespace ColleageEnglishVocaburary
 
         private void ReadWord()
         {
-            var voice = _isForeground ? LearningWord.WordVoice : LearningWord.SentenceVoice;
-            var text = _isForeground ? LearningWord.Word : LearningWord.Sentence;
+            var voice = _isForeground ? ViewModel.LearningWord.WordVoice : ViewModel.LearningWord.SentenceVoice;
+            var text = _isForeground ? ViewModel.LearningWord.Word : ViewModel.LearningWord.Sentence;
             if (string.IsNullOrWhiteSpace(voice))
             {
                 return;
@@ -103,6 +107,9 @@ namespace ColleageEnglishVocaburary
                                 null,
                                 null,
                                 EnabledPlayerControls.Pause);
+            audioTrack.BeginEdit();
+            audioTrack.Tag = "S";
+            audioTrack.EndEdit();
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
@@ -165,11 +172,11 @@ namespace ColleageEnglishVocaburary
 
         private void SetWordCardProperties(String word, String wordVoice, String wordPhrase, String sentence, String sentenceVoice)
         {
-            LearningWord.Word = word;
-            LearningWord.WordVoice = wordVoice;
-            LearningWord.WordPhrase = wordPhrase;
-            LearningWord.Sentence = sentence;
-            LearningWord.SentenceVoice = sentenceVoice;
+            ViewModel.LearningWord.Word = word;
+            ViewModel.LearningWord.WordVoice = wordVoice;
+            ViewModel.LearningWord.WordPhrase = wordPhrase;
+            ViewModel.LearningWord.Sentence = sentence;
+            ViewModel.LearningWord.SentenceVoice = sentenceVoice;
         }
 
         private void UITransform_OnTap(object sender, System.Windows.Input.GestureEventArgs e)

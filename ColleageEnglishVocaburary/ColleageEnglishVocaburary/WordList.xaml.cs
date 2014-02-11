@@ -86,6 +86,9 @@ namespace ColleageEnglishVocaburary
                                 null,
                                 null,
                                 EnabledPlayerControls.Pause);
+            audioTrack.BeginEdit();
+            audioTrack.Tag = "S";
+            audioTrack.EndEdit();
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
@@ -103,6 +106,9 @@ namespace ColleageEnglishVocaburary
                                 null,
                                 null,
                                 EnabledPlayerControls.Pause);
+            audioTrack.BeginEdit();
+            audioTrack.Tag = "S";
+            audioTrack.EndEdit();
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
         }
