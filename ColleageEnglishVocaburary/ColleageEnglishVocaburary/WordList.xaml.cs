@@ -82,7 +82,7 @@ namespace ColleageEnglishVocaburary
                 BackgroundAudioPlayer.Instance.Track = track;
             }
             //BackgroundAudioPlayer.Instance.Track = ;
-            //BackgroundAudioPlayer.Instance.Play();
+            BackgroundAudioPlayer.Instance.Play();
         }
 
         private void Word_OnTap(object sender, GestureEventArgs gestureEventArgs)
@@ -103,6 +103,7 @@ namespace ColleageEnglishVocaburary
             audioTrack.EndEdit();
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
+            BackgroundAudioPlayer.Instance.Play();
         }
 
         private void Sentence_OnTap(object sender, GestureEventArgs e)
@@ -123,6 +124,7 @@ namespace ColleageEnglishVocaburary
             audioTrack.EndEdit();
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
+            BackgroundAudioPlayer.Instance.Play();
         }
 
         private void WordsList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

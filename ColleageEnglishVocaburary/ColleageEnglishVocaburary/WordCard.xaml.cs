@@ -112,6 +112,7 @@ namespace ColleageEnglishVocaburary
             audioTrack.EndEdit();
             BackgroundAudioPlayer.Instance.Stop();
             BackgroundAudioPlayer.Instance.Track = audioTrack;
+            BackgroundAudioPlayer.Instance.Play();
         }
 
         private void ReadWord_OnTap(object sender, GestureEventArgs e)
