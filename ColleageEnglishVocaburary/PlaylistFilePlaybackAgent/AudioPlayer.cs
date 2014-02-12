@@ -54,60 +54,49 @@ namespace PlaylistFilePlaybackAgent
         /// </remarks>
         protected override void OnPlayStateChanged(BackgroundAudioPlayer player, AudioTrack track, PlayState playState)
         {
-            System.Diagnostics.Debug.WriteLine("OnPlayStateChanged");
+            System.Diagnostics.Debug.WriteLine("OnPlayStateChanged begin");
             switch (playState)
             {
                 case PlayState.TrackReady:
                     player.Play();
+                    System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackReady,player.Play();");
                     break;
 
                 case PlayState.TrackEnded:
-
-                    if (player.Track == null)
+                    System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded");
+                    if (player.Track != null && player.Track.Tag == "L")
                     {
-                        if (playlist == null || playlist.Tracks.Count == 0)
+                        System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded,player.Track == null");
+                        if (playlist == null)
                         {
+                            System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded,playlist == null");
                             // Load playlist from isolated storage
                             playlist = Playlist.Load(_colleageenglishvocaburaryplaylistXml);
 
                             currentTrack = 0;
+                            System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded,playlist.Tracks.Count:" + playlist.Tracks.Count);
+                            if (playlist.Tracks.Count > 0)
+                            {
+                                if (playlist.Tracks.Count > 1)
+                                {
+                                    currentTrack = 1;
+                                }
 
-                            if (playlist.Tracks.Count == 0)
-                            {
-                                player.Track = null;
-                                break;
-                            }
-                            else
-                            {
+                                System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded,playlist.Tracks.Count:playlist.Tracks.Count > 0");
                                 player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
-                                break;
                             }
+
+                            break;
                         }
                     }
-
-                    if (playlist != null && player.Track != null && player.Track.Tag == "S")
+                    
+                    if (player.Track != null && player.Track.Tag != "S")
                     {
-                        System.Diagnostics.Debug.WriteLine("play single");
-                        playlist.Tracks= new List<PlaylistTrack>();
-                        playlist.Save(_colleageenglishvocaburaryplaylistXml);
-                        player.Track = null;
-                        break;
-                    }
-
-                    if (null != playlist && playlist.Tracks.Count ==0)
-                    {
-                        player.Track = null;
-                        break;
-                    }
-
-                    if (null != playlist && ++currentTrack >= playlist.Tracks.Count)
-                    {
-                        currentTrack = 0;
-                    }
-
-                    if (null != playlist)
-                    {
-                        player.Track = playlist == null ? null : playlist.Tracks[currentTrack].ToAudioTrack();
+                        System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded,player.Track.Tag != S");
+                        if (null != playlist && playlist.Tracks.Count > 0 && ++currentTrack < playlist.Tracks.Count)
+                        {
+                            player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
+                        }
                     }
                    
                     System.Diagnostics.Debug.WriteLine("TrackEnded:" + (player.Track == null));
@@ -140,12 +129,12 @@ namespace PlaylistFilePlaybackAgent
             switch (action)
             {
                 case UserAction.Play:
+                    System.Diagnostics.Debug.WriteLine("UserAction.Play:");
                     if (player.PlayerState != PlayState.Playing)
                     {
+                        System.Diagnostics.Debug.WriteLine("UserAction.Play:player.Play()");
                         player.Play();
                     }
-                  
-                    System.Diagnostics.Debug.WriteLine("player.Play()" );
                    
                     break;
                 case UserAction.Stop:

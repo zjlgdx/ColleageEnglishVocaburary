@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Linq;
 using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
@@ -70,7 +71,18 @@ namespace ColleageEnglishVocaburary
         private void menuItem1_Click(object sender, EventArgs e)
         {
             SavePlaylist(ViewModel.Words);
-            BackgroundAudioPlayer.Instance.Play();
+            var firstTrack = _playlist.Tracks.FirstOrDefault();
+            if (firstTrack != null)
+            {
+                BackgroundAudioPlayer.Instance.Stop();
+                var track = firstTrack.ToAudioTrack();
+                track.BeginEdit();
+                track.Tag = "L";
+                track.EndEdit();
+                BackgroundAudioPlayer.Instance.Track = track;
+            }
+            //BackgroundAudioPlayer.Instance.Track = ;
+            //BackgroundAudioPlayer.Instance.Play();
         }
 
         private void Word_OnTap(object sender, GestureEventArgs gestureEventArgs)
@@ -177,8 +189,9 @@ namespace ColleageEnglishVocaburary
             if (WordsList.SelectedItems.Count > 0)
             {
                 SavePlaylist(WordsList.SelectedItems);
+                
+               
             }
-            BackgroundAudioPlayer.Instance.Track = null;
             BackgroundAudioPlayer.Instance.Play();
             playAppBarButton.IsEnabled = false;
         }
