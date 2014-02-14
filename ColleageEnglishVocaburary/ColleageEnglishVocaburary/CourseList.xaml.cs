@@ -166,7 +166,7 @@ namespace ColleageEnglishVocaburary
 
         private void NavigateToLearningWord(string courseId)
         {
-            var appSettings = new AppSettings();
+            var appSettings = new AppSettingsViewModel();
 
             if (appSettings.LearningTypeSetting.Equals(Constants.WORD_LIST))
             {

@@ -72,7 +72,7 @@ namespace ColleageEnglishVocaburary
 
             await ViewModel.LoadData();
 
-            var appSettings = new AppSettings();
+            var appSettings = new AppSettingsViewModel();
 
             readingWord = appSettings.AutoReadingSetting;
         }

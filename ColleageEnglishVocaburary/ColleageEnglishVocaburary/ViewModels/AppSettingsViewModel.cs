@@ -1,22 +1,13 @@
-/* 
-    Copyright (c) 2012 - 2013 Microsoft Corporation.  All rights reserved.
-    Use of this sample source code is subject to the terms of the Microsoft license 
-    agreement under which you licensed this sample source code and is provided AS-IS.
-    If you did not accept the terms of the license agreement, you are not authorized 
-    to use this sample source code.  For the terms of the license, please see the 
-    license agreement between you and Microsoft.
-  
-    To see all Code Samples for Windows Phone, visit http://code.msdn.microsoft.com/wpapps
-  
-*/
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.IsolatedStorage;
+using System.Runtime.CompilerServices;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.ViewModels
 {
-    public class AppSettings
+    public class AppSettingsViewModel: INotifyPropertyChanged
     {
 
         // Our isolated storage settings
@@ -34,12 +25,14 @@ namespace ColleageEnglishVocaburary
         /// <summary>
         /// Constructor that gets the application settings.
         /// </summary>
-        public AppSettings()
+        public AppSettingsViewModel()
         {
             try
             {
                 // Get the settings for this application.
                 settings = IsolatedStorageSettings.ApplicationSettings;
+                LearningTypeSetting = GetValueOrDefault<string>(LearningTypeSettingKeyName, LearningTypeSettingDefault);
+                AutoReadingSetting = GetValueOrDefault<bool>(AutoReadingSettingKeyName, AutoReadingSettingDefault);
 
             }
             catch (Exception e)
@@ -113,46 +106,81 @@ namespace ColleageEnglishVocaburary
         /// </summary>
         public void Save()
         {
+            AddOrUpdateValue(LearningTypeSettingKeyName, LearningTypeSetting);
+            AddOrUpdateValue(AutoReadingSettingKeyName, AutoReadingSetting);
             settings.Save();
         }
 
 
+        private string _learningTypeSetting;
+        public string LearningTypeSetting
+        {
+            get { return _learningTypeSetting; }
+            set { this.SetProperty(ref this._learningTypeSetting, value); }
+        }
+
         /// <summary>
         /// Property to get and set a CheckBox Setting Key.
         /// </summary>
-        public string LearningTypeSetting
-        {
-            get
-            {
-                return GetValueOrDefault<string>(LearningTypeSettingKeyName, LearningTypeSettingDefault);
-            }
-            set
-            {
-                if (AddOrUpdateValue(LearningTypeSettingKeyName, value))
-                {
-                    Save();
-                }
-            }
-        }
+        //public string LearningTypeSetting
+        //{
+        //    get
+        //    {
+        //        return GetValueOrDefault<string>(LearningTypeSettingKeyName, LearningTypeSettingDefault);
+        //    }
+        //    set
+        //    {
+        //        if (AddOrUpdateValue(LearningTypeSettingKeyName, value))
+        //        {
+        //            Save();
+        //        }
+        //    }
+        //}
 
 
-        /// <summary>
-        /// 
-        /// </summary>
+        private bool _autoReadingSetting;
         public bool AutoReadingSetting
         {
-            get
-            {
-                return GetValueOrDefault<bool>(AutoReadingSettingKeyName, AutoReadingSettingDefault);
-            }
-            set
-            {
-                if (AddOrUpdateValue(AutoReadingSettingKeyName, value))
-                {
-                    Save();
-                }
-            }
+            get { return _autoReadingSetting; }
+            set { this.SetProperty(ref this._autoReadingSetting, value); }
         }
 
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public bool AutoReadingSetting
+        //{
+        //    get
+        //    {
+        //        return GetValueOrDefault<bool>(AutoReadingSettingKeyName, AutoReadingSettingDefault);
+        //    }
+        //    set
+        //    {
+        //        if (AddOrUpdateValue(AutoReadingSettingKeyName, value))
+        //        {
+        //            Save();
+        //        }
+        //    }
+        //}
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        {
+            if (object.Equals(storage, value))
+            {
+                return false;
+            }
+
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -16,7 +16,6 @@
     shell:SystemTray.IsVisible="True">
     <phone:PhoneApplicationPage.Resources>
         <local:LearningTypeConverter x:Key="LearningTypeConverter" />
-        <local:AppSettings x:Key="appSettings"></local:AppSettings>
     </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -35,9 +34,9 @@
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <StackPanel>
                 <TextBlock>学习模式</TextBlock>
-                <toolkit:ToggleSwitch Name="ToggleSwitch" Content="{Binding Source={StaticResource appSettings}, Path=LearningTypeSetting, Mode=TwoWay}" IsChecked="{Binding Source={StaticResource appSettings}, Path=LearningTypeSetting, Converter={StaticResource LearningTypeConverter}, Mode=TwoWay}" />
+                <toolkit:ToggleSwitch Name="ToggleSwitch" Content="{Binding Path=LearningTypeSetting, Mode=TwoWay}" IsChecked="{Binding Path=LearningTypeSetting, Converter={StaticResource LearningTypeConverter}, Mode=TwoWay}" />
                 <TextBlock>显示卡片时，自动朗读单词</TextBlock>
-                <toolkit:ToggleSwitch Content="自动朗读" IsChecked="{Binding Source={StaticResource appSettings}, Path=AutoReadingSetting, Mode=TwoWay}" IsEnabled="{Binding ElementName=ToggleSwitch, Path=IsChecked}" />
+                <toolkit:ToggleSwitch Content="自动朗读" IsChecked="{Binding Path=AutoReadingSetting, Mode=TwoWay}" IsEnabled="{Binding ElementName=ToggleSwitch, Path=IsChecked}" />
             </StackPanel>
             
         </Grid>
