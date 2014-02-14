@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,10 +9,9 @@ using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
 using ColleageEnglishVocaburary.ViewModel;
-using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.Controls;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.View
 {
     public partial class DownloadVocaburary : PhoneApplicationPage
     {

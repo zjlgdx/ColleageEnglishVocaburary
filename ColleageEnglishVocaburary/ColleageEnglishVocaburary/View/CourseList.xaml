@@ -1,12 +1,12 @@
 ﻿<phone:PhoneApplicationPage
-    x:Class="ColleageEnglishVocaburary.CourseList"
+    x:Class="ColleageEnglishVocaburary.View.CourseList"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:ColleageEnglishVocaburary"
+    xmlns:view="clr-namespace:ColleageEnglishVocaburary.View"
     mc:Ignorable="d"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -15,7 +15,7 @@
     shell:SystemTray.IsVisible="False">
 
     <phone:PhoneApplicationPage.Resources>
-        <local:IsoImageConverter x:Key="IsoImageConverter" />
+        <view:IsoImageConverter x:Key="IsoImageConverter" />
     </phone:PhoneApplicationPage.Resources>
 
         <!--LayoutRoot contains the root grid where all other page content is placed-->

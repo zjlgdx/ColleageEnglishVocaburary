@@ -1,15 +1,12 @@
-﻿using System.IO.IsolatedStorage;
+﻿using System;
 using System.Linq;
+using System.Windows;
+using System.Windows.Navigation;
 using ColleageEnglishVocaburary.ViewModel;
-using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
-using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.View
 {
     public partial class WordCard : PhoneApplicationPage
     {

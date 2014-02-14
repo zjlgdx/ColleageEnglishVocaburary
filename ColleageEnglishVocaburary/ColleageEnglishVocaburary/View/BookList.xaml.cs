@@ -1,10 +1,9 @@
-﻿using Microsoft.Phone.Controls;
-using System;
-using System.Windows.Input;
+﻿using System;
 using System.Windows.Navigation;
+using Microsoft.Phone.Controls;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.View
 {
     public partial class BookList : PhoneApplicationPage
     {

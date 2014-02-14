@@ -1,28 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
-using CaptainsLog;
-using ColleageEnglishVocaburary.Model;
-using ColleageEnglishVocaburary.Resources;
+using System.Windows.Navigation;
 using ColleageEnglishVocaburary.ViewModel;
-using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using PlaylistFilePlaybackAgent;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.IsolatedStorage;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.View
 {
     public partial class WordList : PhoneApplicationPage
     {

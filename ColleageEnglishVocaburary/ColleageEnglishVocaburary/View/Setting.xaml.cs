@@ -1,12 +1,11 @@
-﻿using System.Windows.Navigation;
-using ColleageEnglishVocaburary.ViewModel;
-using ColleageEnglishVocaburary.ViewModels;
-using Microsoft.Phone.Controls;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Navigation;
+using ColleageEnglishVocaburary.ViewModel;
+using Microsoft.Phone.Controls;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.View
 {
     public partial class Setting : PhoneApplicationPage
     {

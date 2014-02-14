@@ -96,16 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="BookList.xaml.cs">
-      <DependentUpon>BookList.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="CourseList.xaml.cs">
-      <DependentUpon>CourseList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DownloadVocaburary.xaml.cs">
-      <DependentUpon>DownloadVocaburary.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Model\Book.cs" />
     <Compile Include="Model\Course.cs" />
     <Compile Include="DBCSEncoding.cs" />
@@ -122,58 +113,66 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Setting.xaml.cs">
-      <DependentUpon>Setting.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\IsoImageConverter.cs" />
     <Compile Include="ViewModel\AppSettingsViewModel.cs" />
     <Compile Include="ViewModel\BookViewModel.cs" />
     <Compile Include="ViewModel\CourseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WordViewModel.cs" />
+    <Compile Include="View\BookList.xaml.cs">
+      <DependentUpon>BookList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CourseList.xaml.cs">
+      <DependentUpon>CourseList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DownloadVocaburary.xaml.cs">
+      <DependentUpon>DownloadVocaburary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Setting.xaml.cs">
+      <DependentUpon>Setting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\WordCard.xaml.cs">
+      <DependentUpon>WordCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\WordList.xaml.cs">
+      <DependentUpon>WordList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WebClientExtensions\EAPCommon.cs" />
     <Compile Include="WebClientExtensions\HttpClient.cs" />
     <Compile Include="WebClientExtensions\WebClientExtensions.cs" />
-    <Compile Include="WordCard.xaml.cs">
-      <DependentUpon>WordCard.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WordList.xaml.cs">
-      <DependentUpon>WordList.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="BookList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CourseList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="DownloadVocaburary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Setting.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="View\BookList.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="WordCard.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="View\CourseList.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="WordList.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="View\DownloadVocaburary.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Setting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\WordCard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\WordList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

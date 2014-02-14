@@ -1,12 +1,4 @@
-﻿using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using CaptainsLog;
-using ColleageEnglishVocaburary.Model;
-using ColleageEnglishVocaburary.Resources;
-using ColleageEnglishVocaburary.ViewModel;
-using ColleageEnglishVocaburary.ViewModels;
-using Microsoft.Phone.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -15,10 +7,17 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using CaptainsLog;
+using ColleageEnglishVocaburary.Model;
+using ColleageEnglishVocaburary.Resources;
+using ColleageEnglishVocaburary.ViewModel;
+using Microsoft.Phone.Controls;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
-namespace ColleageEnglishVocaburary
+namespace ColleageEnglishVocaburary.View
 {
     public partial class CourseList : PhoneApplicationPage
     {
