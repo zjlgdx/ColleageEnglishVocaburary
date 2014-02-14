@@ -93,8 +93,12 @@ namespace PlaylistFilePlaybackAgent
                     if (player.Track != null && player.Track.Tag != "S")
                     {
                         System.Diagnostics.Debug.WriteLine("OnPlayStateChanged,playState:TrackEnded,player.Track.Tag != S");
-                        if (null != playlist && playlist.Tracks.Count > 0 && ++currentTrack < playlist.Tracks.Count)
+                        if (null != playlist && playlist.Tracks.Count > 0 /*&& ++currentTrack < playlist.Tracks.Count*/)
                         {
+                            if (++currentTrack >= playlist.Tracks.Count)
+                            {
+                                currentTrack = 0;
+                            }
                             player.Track = playlist.Tracks[currentTrack].ToAudioTrack();
                         }
                     }
