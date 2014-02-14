@@ -1,5 +1,6 @@
 ﻿using System.IO.IsolatedStorage;
 using System.Linq;
+using ColleageEnglishVocaburary.ViewModel;
 using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;

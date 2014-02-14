@@ -1,11 +1,10 @@
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.IsolatedStorage;
 using System.Runtime.CompilerServices;
 
-namespace ColleageEnglishVocaburary.ViewModels
+namespace ColleageEnglishVocaburary.ViewModel
 {
     public class AppSettingsViewModel: INotifyPropertyChanged
     {
@@ -19,7 +18,7 @@ namespace ColleageEnglishVocaburary.ViewModels
         
 
         // The default value of our settings
-        const string LearningTypeSettingDefault = "��Ƭʽ";
+        const string LearningTypeSettingDefault = "卡片式";
         const bool AutoReadingSettingDefault = true;
 
         /// <summary>

@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Linq;
+using System.Windows.Data;
 using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
+using ColleageEnglishVocaburary.ViewModel;
 using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.BackgroundAudio;
 using Microsoft.Phone.Controls;
@@ -266,6 +268,24 @@ namespace ColleageEnglishVocaburary
         {
             string courseId = NavigationContext.QueryString["courseId"];
             NavigationService.Navigate(new Uri("/Setting.xaml?courseId=" + courseId, UriKind.Relative));
+        }
+    }
+
+    public class EmptyOrNullConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value == null || value.ToString().Equals(""))
+            {
+                return Visibility.Collapsed;
+            }
+
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

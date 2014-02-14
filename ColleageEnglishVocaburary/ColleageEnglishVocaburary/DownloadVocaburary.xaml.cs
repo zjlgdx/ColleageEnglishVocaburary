@@ -9,6 +9,7 @@ using System.Windows.Navigation;
 using CaptainsLog;
 using ColleageEnglishVocaburary.Model;
 using ColleageEnglishVocaburary.Resources;
+using ColleageEnglishVocaburary.ViewModel;
 using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.Controls;
 

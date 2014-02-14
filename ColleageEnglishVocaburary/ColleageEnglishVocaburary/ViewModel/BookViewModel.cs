@@ -1,12 +1,11 @@
-﻿using System.Windows;
-using ColleageEnglishVocaburary.Model;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using ColleageEnglishVocaburary.Model;
 
-namespace ColleageEnglishVocaburary.ViewModels
+namespace ColleageEnglishVocaburary.ViewModel
 {
     public class BookViewModel : INotifyPropertyChanged
     {

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Navigation;
+using ColleageEnglishVocaburary.ViewModel;
 using ColleageEnglishVocaburary.ViewModels;
 using Microsoft.Phone.Controls;
 using System;

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ColleageEnglishVocaburary.ViewModels
+namespace ColleageEnglishVocaburary.ViewModel
 {
     public class WordViewModel : INotifyPropertyChanged
     {

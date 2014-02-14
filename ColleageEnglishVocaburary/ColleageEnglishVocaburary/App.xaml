@@ -1,8 +1,8 @@
-<Application x:Class="ColleageEnglishVocaburary.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone" xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:local="clr-namespace:ColleageEnglishVocaburary.ViewModels" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d1p1:Ignorable="d" xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
+<Application x:Class="ColleageEnglishVocaburary.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone" xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone" xmlns:sys="clr-namespace:System;assembly=mscorlib"  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d1p1:Ignorable="d" xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
   <!--Application Resources-->
   <Application.Resources>
-    <local:IsoImageConverter x:Key="IsoImageCoverter" />
-    <local:EmptyOrNullConverter x:Key="EmptyOrNullConverter" />
+    
+    
     <sys:Double x:Key="PanoramaItemHeaderFontSize">66</sys:Double>
     <Style x:Key="PanoramaItemHeaderTextStyle" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
