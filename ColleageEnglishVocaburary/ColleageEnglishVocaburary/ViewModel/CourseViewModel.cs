@@ -36,6 +36,7 @@ namespace ColleageEnglishVocaburary.ViewModel
             CourseCommand = new RelayCommand<string>(this.ShowCourse);
             PreviousWordCommand = new RelayCommand<string>(this.ShowPreviousWord);
             NextWordCommand = new RelayCommand<string>(this.ShowNextWord);
+            TransformCommand = new RelayCommand<string>(this.ShowNextWord);
         }
 
         public ICommand PreviousWordCommand { get; private set; }
