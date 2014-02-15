@@ -1,11 +1,35 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using Cimbalino.Phone.Toolkit.Services;
+using ColleageEnglishVocaburary.Model;
+using GalaSoft.MvvmLight.Command;
+using Microsoft.Phone.BackgroundAudio;
 
 namespace ColleageEnglishVocaburary.ViewModel
 {
     public class WordViewModel : INotifyPropertyChanged
     {
+
+
+        public WordViewModel()
+        {
+            ReadWordCommand = new RelayCommand<string>(this.ReadVoice);
+        }
+
+        
+
+        //private string _courseName;
+        //public string CourseName
+        //{
+        //    get { return _courseName; }
+        //    set { this.SetProperty(ref this._courseName, value); }
+        //}
+
+        public ICommand ReadWordCommand { get; private set; }
+
         private string _wordId;
         public string WordId
         {
@@ -68,6 +92,30 @@ namespace ColleageEnglishVocaburary.ViewModel
             {
                 eventHandler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void ReadVoice(string voicePath)
+        {
+            var voice = voicePath;//_isForeground ? ViewModel.LearningWord.WordVoice : ViewModel.LearningWord.SentenceVoice;
+            var text = voicePath;// todo // _isForeground ? ViewModel.LearningWord.Word : ViewModel.LearningWord.Sentence;
+            if (string.IsNullOrWhiteSpace(voice))
+            {
+                return;
+            }
+            var audioTrack =
+                new AudioTrack(new Uri(voice, UriKind.Relative),
+                                text,
+                                text,
+                                text,
+                                null,
+                                null,
+                                EnabledPlayerControls.Pause);
+            audioTrack.BeginEdit();
+            audioTrack.Tag = "S";
+            audioTrack.EndEdit();
+            BackgroundAudioPlayer.Instance.Stop();
+            BackgroundAudioPlayer.Instance.Track = audioTrack;
+            BackgroundAudioPlayer.Instance.Play();
         }
     }
 }

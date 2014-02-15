@@ -10,36 +10,13 @@ namespace ColleageEnglishVocaburary.View
 {
     public partial class WordCard : PhoneApplicationPage
     {
-        bool _isForeground = true;
-
-        private int index;
-
-        private bool readingWord;
-
-        private CourseViewModel viewModel = null;
-
-        /// <summary>
-        /// A static ViewModel used by the views to bind against.
-        /// </summary>
-        /// <returns>The CourseViewModel object.</returns>
-        public CourseViewModel ViewModel
-        {
-            get
-            {
-                // Delay creation of the view model until necessary
-                if (viewModel == null)
-                    viewModel = new CourseViewModel();
-
-                return viewModel;
-            }
-        }
 
         public WordCard()
         {
             InitializeComponent();
 
-            DataContext = ViewModel.LearningWord;
-            HeadStackPanel.DataContext = ViewModel;
+            //DataContext = ViewModel.LearningWord;
+            //HeadStackPanel.DataContext = ViewModel;
 
             this.myStoryboardX1.Completed += new EventHandler(Completed_StoryBoard1);
             this.myStoryboardX3.Completed += new EventHandler(Completed_StoryBoard3);
@@ -89,94 +66,13 @@ namespace ColleageEnglishVocaburary.View
             this.myStoryboardX4.Begin();
         }
 
-        private void ReadWord()
-        {
-            var voice = _isForeground ? ViewModel.LearningWord.WordVoice : ViewModel.LearningWord.SentenceVoice;
-            var text = _isForeground ? ViewModel.LearningWord.Word : ViewModel.LearningWord.Sentence;
-            if (string.IsNullOrWhiteSpace(voice))
-            {
-                return;
-            }
-            var audioTrack =
-                new AudioTrack(new Uri(voice, UriKind.Relative),
-                                text,
-                                text,
-                                text,
-                                null,
-                                null,
-                                EnabledPlayerControls.Pause);
-            audioTrack.BeginEdit();
-            audioTrack.Tag = "S";
-            audioTrack.EndEdit();
-            BackgroundAudioPlayer.Instance.Stop();
-            BackgroundAudioPlayer.Instance.Track = audioTrack;
-            BackgroundAudioPlayer.Instance.Play();
-        }
+        
 
-        private void ReadWord_OnTap(object sender, GestureEventArgs e)
-        {
-            ReadWord();
-        }
+       
 
-        private void UIPrevious_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            //_isForeground = true;
-            if (index == 0)
-            {
-                index = ViewModel.Words.Count -1;
-            }
-            else
-            {
-                index--;
-            }
+        
 
-            var learningWord = ViewModel.Words[index];
-
-            SetWordCardProperties(learningWord.Word,
-                learningWord.WordVoice,
-                learningWord.WordPhrase,
-                learningWord.Sentence,
-                learningWord.SentenceVoice);
-
-            if (readingWord)
-            {
-                ReadWord();
-            }
-        }
-
-        private void UINext_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-           // _isForeground = true;
-            if (index == ViewModel.Words.Count -1)
-            {
-                index = 0;
-            }
-            else
-            {
-                index++;
-            }
-            var learningWord = ViewModel.Words[index];
-
-            SetWordCardProperties(learningWord.Word,
-                learningWord.WordVoice,
-                learningWord.WordPhrase,
-                learningWord.Sentence,
-                learningWord.SentenceVoice);
-
-            if (readingWord)
-            {
-                ReadWord();
-            }
-        }
-
-        private void SetWordCardProperties(String word, String wordVoice, String wordPhrase, String sentence, String sentenceVoice)
-        {
-            ViewModel.LearningWord.Word = word;
-            ViewModel.LearningWord.WordVoice = wordVoice;
-            ViewModel.LearningWord.WordPhrase = wordPhrase;
-            ViewModel.LearningWord.Sentence = sentence;
-            ViewModel.LearningWord.SentenceVoice = sentenceVoice;
-        }
+        
 
         private void UITransform_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
         {

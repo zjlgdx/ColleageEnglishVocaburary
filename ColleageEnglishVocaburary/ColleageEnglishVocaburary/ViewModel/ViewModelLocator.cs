@@ -12,6 +12,8 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using Cimbalino.Phone.Toolkit.Services;
+using ColleageEnglishVocaburary.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
@@ -31,6 +33,25 @@ namespace ColleageEnglishVocaburary.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
+            if (!SimpleIoc.Default.IsRegistered<INavigationService>())
+            {
+                SimpleIoc.Default.Register<INavigationService, NavigationService>();
+            }
+
+            if (!SimpleIoc.Default.IsRegistered<IDataService>())
+            {
+                SimpleIoc.Default.Register<IDataService, DataService>();
+            }
+
+            
+
+            SimpleIoc.Default.Register<BookViewModel>();
+
+            SimpleIoc.Default.Register<CourseViewModel>();
+
+            SimpleIoc.Default.Register<WordViewModel>();
+            
+
             ////if (ViewModelBase.IsInDesignModeStatic)
             ////{
             ////    // Create design time view services and models
@@ -42,16 +63,32 @@ namespace ColleageEnglishVocaburary.ViewModel
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
 
-            SimpleIoc.Default.Register<MainViewModel>();
+           // SimpleIoc.Default.Register<MainViewModel>();
         }
 
-        public MainViewModel Main
+        public BookViewModel BookViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return ServiceLocator.Current.GetInstance<BookViewModel>();
             }
         }
+
+        public CourseViewModel CourseViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<CourseViewModel>();
+            }
+        }
+
+        //public MainViewModel Main
+        //{
+        //    get
+        //    {
+        //        return ServiceLocator.Current.GetInstance<MainViewModel>();
+        //    }
+        //}
         
         public static void Cleanup()
         {

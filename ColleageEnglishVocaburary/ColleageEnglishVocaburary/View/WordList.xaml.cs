@@ -32,7 +32,7 @@ namespace ColleageEnglishVocaburary.View
             {
                 // Delay creation of the view model until necessary
                 if (viewModel == null)
-                    viewModel = new CourseViewModel();
+                    viewModel = new CourseViewModel(null,null);
 
                 return viewModel;
             }

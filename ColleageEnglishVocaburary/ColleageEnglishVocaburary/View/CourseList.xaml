@@ -12,6 +12,7 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
+    DataContext="{Binding BookViewModel, Source={StaticResource Locator}}"
     shell:SystemTray.IsVisible="False">
 
     <phone:PhoneApplicationPage.Resources>
@@ -23,20 +24,21 @@
         <phone:Panorama Title="课程目录" TitleTemplate="{StaticResource SmallPanoramaTitle}">
             
             <!--Panorama item one-->
-            <phone:PanoramaItem Name="CourseListItem" Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="Visible">
+            <phone:PanoramaItem Header="{Binding BookName}" HeaderTemplate="{StaticResource CoursePanoramaHeader}"  Visibility="{Binding DisplayCourseList}">
                 
                 <phone:LongListSelector Margin="0,-38,-22,2" ItemsSource="{Binding Courses}">
                     
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="12,2,0,4" Height="105" Width="432">
-                                <!--Replace rectangle with image-->
 
-                                <Image Width="425" Height="105" Tap="Course_OnTap" Tag="{Binding CourseId}" Source="{Binding CourseImage, Converter={StaticResource IsoImageConverter}}"></Image>
-                                <!--<StackPanel Width="311" Margin="8,-7,0,0">
-                                    <TextBlock Text="{Binding Id}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeLarge}" />
-                                    <TextBlock Text="{Binding CourseName}" TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeLarge}" />
-                                </StackPanel>-->
+                                <Button Command="{Binding CourseCommand, Mode=OneTime}" CommandParameter="{Binding CourseId}">
+                                    <Image Width="425" Height="105" Source="{Binding CourseImage, Converter={StaticResource IsoImageConverter}}">
+
+                                    </Image>
+                                </Button>
+                                
+                                
                             </StackPanel>
                         </DataTemplate>
                     </phone:LongListSelector.ItemTemplate>
@@ -44,13 +46,13 @@
             </phone:PanoramaItem>
 
             <!--Panorama item two-->
-            <phone:PanoramaItem Name="downloadListStatus" Header="下载状态" HeaderTemplate="{StaticResource CoursePanoramaHeader}" Visibility="Collapsed">
+            <phone:PanoramaItem Header="下载状态" HeaderTemplate="{StaticResource CoursePanoramaHeader}" Visibility="{Binding DisplayDownloadProcess}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ProgressBar Name="progressBar1" Grid.Row="0" Value="0" IsIndeterminate="False" Height="50" Maximum="8" LargeChange="1"></ProgressBar>
+                    <ProgressBar Grid.Row="0" Value="{Binding DownloadingProcessPercentage}" IsIndeterminate="False" Height="50" Maximum="8" LargeChange="1"></ProgressBar>
                     <TextBlock Text="{Binding DownloadingStatus}" Grid.Row="1"></TextBlock>
                 </Grid>
             </phone:PanoramaItem>

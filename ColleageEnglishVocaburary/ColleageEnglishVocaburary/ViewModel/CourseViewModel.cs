@@ -1,19 +1,126 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Cimbalino.Phone.Toolkit.Services;
 using ColleageEnglishVocaburary.Model;
+using GalaSoft.MvvmLight.Command;
+using Microsoft.Phone.BackgroundAudio;
 
 namespace ColleageEnglishVocaburary.ViewModel
 {
     public class CourseViewModel : INotifyPropertyChanged
     {
-        public CourseViewModel()
+        private readonly IDataService _dataService;
+        /// <summary>
+        /// The navigation service.
+        /// </summary>
+        private readonly INavigationService _navigationService;
+
+        private int index;
+
+        bool _isForeground = true;
+
+        private bool readingWord;
+
+        public CourseViewModel(IDataService dataService, INavigationService navigationService)
         {
+            _dataService = dataService;
+            _navigationService = navigationService;
             this.Words = new ObservableCollection<WordViewModel>();
             this.LearningWord = new WordViewModel();
+            CourseCommand = new RelayCommand<string>(this.ShowCourse);
+            PreviousWordCommand = new RelayCommand<string>(this.ShowPreviousWord);
+            NextWordCommand = new RelayCommand<string>(this.ShowNextWord);
+        }
+
+        public ICommand PreviousWordCommand { get; private set; }
+        public ICommand NextWordCommand { get; private set; }
+
+        private void ShowNextWord(string obj)
+        {
+            if (index == this.Words.Count - 1)
+            {
+                index = 0;
+            }
+            else
+            {
+                index++;
+            }
+            var learningWord = this.Words[index];
+
+            SetWordCardProperties(learningWord.Word,
+                learningWord.WordVoice,
+                learningWord.WordPhrase,
+                learningWord.Sentence,
+                learningWord.SentenceVoice);
+
+            if (readingWord)
+            {
+                ReadWord();
+            }
+        }
+
+        private void ReadWord()
+        {
+            var voice = _isForeground ? this.LearningWord.WordVoice : this.LearningWord.SentenceVoice;
+            var text = _isForeground ? this.LearningWord.Word : this.LearningWord.Sentence;
+            if (string.IsNullOrWhiteSpace(voice))
+            {
+                return;
+            }
+            var audioTrack =
+                new AudioTrack(new Uri(voice, UriKind.Relative),
+                                text,
+                                text,
+                                text,
+                                null,
+                                null,
+                                EnabledPlayerControls.Pause);
+            audioTrack.BeginEdit();
+            audioTrack.Tag = "S";
+            audioTrack.EndEdit();
+            BackgroundAudioPlayer.Instance.Stop();
+            BackgroundAudioPlayer.Instance.Track = audioTrack;
+            BackgroundAudioPlayer.Instance.Play();
+        }
+
+        private void ShowPreviousWord(string obj)
+        {
+            if (index == 0)
+            {
+                index = this.Words.Count - 1;
+            }
+            else
+            {
+                index--;
+            }
+
+            var learningWord = this.Words[index];
+
+            SetWordCardProperties(learningWord.Word,
+                learningWord.WordVoice,
+                learningWord.WordPhrase,
+                learningWord.Sentence,
+                learningWord.SentenceVoice);
+
+            if (readingWord)
+            {
+                ReadWord();
+            }
+        }
+
+        private void SetWordCardProperties(String word, String wordVoice, String wordPhrase, String sentence, String sentenceVoice)
+        {
+            this.LearningWord.Word = word;
+            this.LearningWord.WordVoice = wordVoice;
+            this.LearningWord.WordPhrase = wordPhrase;
+            this.LearningWord.Sentence = sentence;
+            this.LearningWord.SentenceVoice = sentenceVoice;
         }
 
         public async Task LoadData()
@@ -30,6 +137,7 @@ namespace ColleageEnglishVocaburary.ViewModel
             {
                 this.Words.Add(new WordViewModel
                     {
+                        //CourseName = this.CourseName,
                         WordId = word.WordId,
                         Word = word.Word,
                         WordPhrase = word.WordPhrase,
@@ -42,6 +150,7 @@ namespace ColleageEnglishVocaburary.ViewModel
             var learingWord = course.NewWords.FirstOrDefault();
             if (learingWord != null)
             {
+                //this.LearningWord.CourseName = learingWord.CourseName;
                 this.LearningWord.WordId = learingWord.WordId;
                 this.LearningWord.Word = learingWord.Word;
                 this.LearningWord.WordPhrase = learingWord.WordPhrase;
@@ -104,6 +213,46 @@ namespace ColleageEnglishVocaburary.ViewModel
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public ICommand CourseCommand { get; private set; }
+        public ICommand TransformCommand { get; private set; }
+
+        
+
+        private async void ShowCourse(string courseId)
+        {
+            // todo: put the logic to data service
+            //await _dataService.GetCourses(bookId);
+
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                if (storage.FileExists(courseId.Replace("/", "_")))
+                {
+                    NavigateToLearningWord(courseId);
+                }
+                else
+                {
+                    _navigationService.NavigateTo(new Uri("/DownloadVocaburary.xaml?courseId=" + courseId, UriKind.Relative));
+                }
+            }
+
+        }
+
+        private void NavigateToLearningWord(string courseId)
+        {
+            var appSettings = new AppSettingsViewModel();
+
+            if (appSettings.LearningTypeSetting.Equals(Constants.WORD_LIST))
+            {
+                _navigationService.NavigateTo(new Uri("/WordList.xaml?courseId=" + courseId, UriKind.Relative));
+            }
+            else
+            {
+                _navigationService.NavigateTo(new Uri("/WordCard.xaml?courseId=" + courseId,
+                               UriKind.Relative));
+            }
+
         }
     }
 }

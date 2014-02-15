@@ -7,10 +7,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WP8"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
+    DataContext="{Binding CourseViewModel, Source={StaticResource Locator}}"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
@@ -32,10 +35,13 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <toolkit:GestureService.GestureListener>
-                <toolkit:GestureListener Tap="ReadWord_OnTap" />
-            </toolkit:GestureService.GestureListener>
+        <Grid x:Name="ContentPanel" DataContext="{Binding LearningWord}" Grid.Row="1" Margin="12,0,12,0">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Tap">
+                    <command:EventToCommand Command="{Binding ReadWordCommand, Mode=OneWay}"/>
+                </i:EventTrigger>
+                
+            </i:Interaction.Triggers>
 
             <Grid.Resources>
                 <!--正反两面的翻转效果-->
@@ -63,6 +69,7 @@
                     <PlaneProjection x:Name="WordPlaneProjection" />
                 </Grid.Projection>
                 <Border BorderBrush="#E36FAB" CornerRadius="15" Background="Teal" BorderThickness="3"  Margin="10" >
+                    
                     <TextBlock Name="WordTextBlock" Text="{Binding Word}" VerticalAlignment="Center"  HorizontalAlignment="Center"  TextWrapping="Wrap" Margin="10,0" Style="{StaticResource PhoneTextExtraLargeStyle}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
                 </Border>
             </Grid>
@@ -96,12 +103,21 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Tap="UIPrevious_OnTap" Background="#1C4A85" Margin="0,0,10,0">
-                <TextBlock TextAlignment="Center" FontSize="{StaticResource PhoneFontSizeExtraLarge}">上一个</TextBlock>
+            <Border Grid.Column="0" Background="#1C4A85" Margin="0,0,10,0">
+
+                <Button Command="{Binding PreviousWordCommand, Mode=OneTime}" >上一个</Button>
             </Border>
-            <Ellipse Fill="Blue"  Grid.Column="1" Tap="UITransform_OnTap" Height="50" Width="50"/>
-            <Border Grid.Column="2" Tap="UINext_OnTap" Background="#1C4A85" Margin="10,0,0,0">
-                <TextBlock  TextAlignment="Center" FontSize="{StaticResource PhoneFontSizeExtraLarge}">下一个</TextBlock>
+            <Ellipse Fill="Blue"  Grid.Column="1" Tap="UITransform_OnTap" Height="50" Width="50">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Tap">
+                        <command:EventToCommand Command="{Binding ReadWordCommand, Mode=OneWay}"/>
+                    </i:EventTrigger>
+
+                </i:Interaction.Triggers>
+            </Ellipse>
+            <Border Grid.Column="2" Background="#1C4A85" Margin="10,0,0,0">
+
+                <Button Command="{Binding NextWordCommand, Mode=OneTime}" >下一个</Button>
             </Border>
         </Grid>
     </Grid>

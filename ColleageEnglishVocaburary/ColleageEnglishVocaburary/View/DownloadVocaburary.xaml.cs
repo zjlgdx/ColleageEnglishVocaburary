@@ -135,6 +135,7 @@ namespace ColleageEnglishVocaburary.View
             {
                 var paragraph = matchParagraph.Value;
                 var objWord = new NewWord();
+                objWord.CourseName = courseName;
                 objWord.WordId = (wordId++).ToString();
 
                 await FetchMedia(paragraph, course, objWord, client, bookUrl);

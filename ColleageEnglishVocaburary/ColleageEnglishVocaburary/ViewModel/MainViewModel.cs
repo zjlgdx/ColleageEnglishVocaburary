@@ -30,5 +30,7 @@ namespace ColleageEnglishVocaburary.ViewModel
             ////    // Code runs "for real"
             ////}
         }
+
+       // mvvminpc
     }
 }
