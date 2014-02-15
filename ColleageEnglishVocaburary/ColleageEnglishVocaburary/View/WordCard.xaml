@@ -9,6 +9,7 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WP8"
+    xmlns:helper="clr-namespace:ColleageEnglishVocaburary.Helper"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -45,20 +46,20 @@
 
             <Grid.Resources>
                 <!--正反两面的翻转效果-->
-                <Storyboard x:Name="myStoryboardX1">
+                <Storyboard x:Name="myStoryboardX1" helper:StoryboardManager.ID="myStoryboardX1">
                     <DoubleAnimation Duration="0:0:1" To="90" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
                 </Storyboard>
-                <Storyboard x:Name="myStoryboardX2">
+                <Storyboard x:Name="myStoryboardX2" helper:StoryboardManager.ID="myStoryboardX2">
                     <DoubleAnimation Duration="0:0:1" To="180" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
                 </Storyboard>
-                <Storyboard x:Name="myStoryboardX3">
+                <Storyboard x:Name="myStoryboardX3" helper:StoryboardManager.ID="myStoryboardX3">
                     <DoubleAnimation Duration="0:0:1" To="90" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
                 </Storyboard>
-                <Storyboard x:Name="myStoryboardX4">
+                <Storyboard x:Name="myStoryboardX4" helper:StoryboardManager.ID="myStoryboardX4">
                     <DoubleAnimation Duration="0:0:1" To="0" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPlaneProjection" />
                 </Storyboard>
 
-                <Storyboard x:Name="myStoryboardX5">
+                <Storyboard x:Name="myStoryboardX5" helper:StoryboardManager.ID="myStoryboardX5">
                     <DoubleAnimation Duration="0" From="180" Storyboard.TargetProperty="RotationY" Storyboard.TargetName="WordPhrasePlaneProjection" />
                 </Storyboard>
 
@@ -107,7 +108,7 @@
 
                 <Button Command="{Binding PreviousWordCommand, Mode=OneTime}" >上一个</Button>
             </Border>
-            <Ellipse Fill="Blue"  Grid.Column="1" Tap="UITransform_OnTap" Height="50" Width="50">
+            <Ellipse Fill="Blue"  Grid.Column="1" Height="50" Width="50">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Tap">
                         <command:EventToCommand Command="{Binding ReadWordCommand, Mode=OneWay}"/>

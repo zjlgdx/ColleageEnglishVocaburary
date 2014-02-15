@@ -15,9 +15,6 @@ namespace ColleageEnglishVocaburary.View
         {
             InitializeComponent();
 
-            //DataContext = ViewModel.LearningWord;
-            //HeadStackPanel.DataContext = ViewModel;
-
             this.myStoryboardX1.Completed += new EventHandler(Completed_StoryBoard1);
             this.myStoryboardX3.Completed += new EventHandler(Completed_StoryBoard3);
 
@@ -74,24 +71,24 @@ namespace ColleageEnglishVocaburary.View
 
         
 
-        private void UITransform_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            if (_isForeground)
-            {
-                this.myStoryboardX1.Begin();
-            }
-            else
-            {
-                this.myStoryboardX3.Begin();
-            }
+        //private void UITransform_OnTap(object sender, System.Windows.Input.GestureEventArgs e)
+        //{
+        //    if (_isForeground)
+        //    {
+        //        this.myStoryboardX1.Begin();
+        //    }
+        //    else
+        //    {
+        //        this.myStoryboardX3.Begin();
+        //    }
 
-            this._isForeground = !this._isForeground;
+        //    this._isForeground = !this._isForeground;
 
-            if (readingWord)
-            {
-                ReadWord();
-            }
-        }
+        //    if (readingWord)
+        //    {
+        //        ReadWord();
+        //    }
+        //}
 
         private void ApplicationBarIconButton_OnClick(object sender, EventArgs e)
         {

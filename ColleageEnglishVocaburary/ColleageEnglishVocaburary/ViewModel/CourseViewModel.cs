@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cimbalino.Phone.Toolkit.Services;
+using ColleageEnglishVocaburary.Helper;
 using ColleageEnglishVocaburary.Model;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Phone.BackgroundAudio;
@@ -36,7 +37,28 @@ namespace ColleageEnglishVocaburary.ViewModel
             CourseCommand = new RelayCommand<string>(this.ShowCourse);
             PreviousWordCommand = new RelayCommand<string>(this.ShowPreviousWord);
             NextWordCommand = new RelayCommand<string>(this.ShowNextWord);
-            TransformCommand = new RelayCommand<string>(this.ShowNextWord);
+            TransformCommand = new RelayCommand<string>(this.TransformBoard);
+        }
+
+        private void TransformBoard(string obj)
+        {
+            if (_isForeground)
+            {
+                StoryboardManager.PlayStoryboard("myStoryboardX1", (x) => StoryboardManager.PlayStoryboard("myStoryboardX2", (o) => { }, null), null);
+            }
+            else
+            {
+                StoryboardManager.PlayStoryboard("myStoryboardX3", (x) => StoryboardManager.PlayStoryboard("myStoryboardX4", (o) => { }, null), null);
+            }
+
+            this._isForeground = !this._isForeground;
+
+            if (readingWord)
+            {
+                ReadWord();
+            }
+
+            
         }
 
         public ICommand PreviousWordCommand { get; private set; }
