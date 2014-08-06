@@ -113,8 +113,8 @@ namespace ColleageEnglishVocaburary
         private async Task DownloadWord(string courseId)
         {
             var bookId = courseId.Substring(0, 2);
-            string bookUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + bookId;
-            string courseUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + courseId;
+            string bookUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL+"/" + bookId;
+            string courseUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL+"/" + courseId;
 
             var client = new WebClient { Encoding = DBCSCodePage.DBCSEncoding.GetDBCSEncoding("gb2312") };
             string response = await client.DownloadStringTaskAsync(new Uri(courseUrl));
