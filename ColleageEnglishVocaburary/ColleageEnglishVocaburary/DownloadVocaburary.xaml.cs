@@ -113,8 +113,8 @@ namespace ColleageEnglishVocaburary
         private async Task DownloadWord(string courseId)
         {
             var bookId = courseId.Substring(0, 2);
-            string bookUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL+"/" + bookId;
-            string courseUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL+"/" + courseId;
+            string bookUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + "/" + bookId;
+            string courseUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + "/" + courseId;
 
             var client = new WebClient { Encoding = DBCSCodePage.DBCSEncoding.GetDBCSEncoding("gb2312") };
             string response = await client.DownloadStringTaskAsync(new Uri(courseUrl));
@@ -152,11 +152,64 @@ namespace ColleageEnglishVocaburary
                 progressBar1.Value += progressBar1.LargeChange;
             }
 
+            //course.NewWords = newWords;
+
+            //await MyDataSerializer<Course>.SaveObjectsAsync(course, ViewModel.CourseId);
+
+            ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE + "Text A";
+
+            //--------------
+
+            courseUrl = AppResources.COLLEGE_ENGLISH_ONLINE_BOOK_BASE_URL + "/" + courseId.Replace("p2newword1", "p3newword1");
+
+            response = await client.DownloadStringTaskAsync(new Uri(courseUrl));
+
+            //var courseName = GetCourseName(courseId);
+            //var course = new Course { CourseId = courseId, CourseName = courseName };
+            //var newWords = new List<NewWord>();
+
+            regexParagraph = new Regex(PARAGRAPH_PATTERN);
+
+            matchParagraphes = regexParagraph.Matches(response);
+
+            wordId = 0;
+            totalCount = matchParagraphes.Count;
+            percentage = 1d / totalCount * 100d;
+            progressBar1.LargeChange = percentage;
+
+            foreach (Match matchParagraph in matchParagraphes)
+            {
+                var paragraph = matchParagraph.Value;
+                var objWord = new NewWord();
+                objWord.WordId = (wordId++).ToString();
+
+                await FetchMedia(paragraph, course, objWord, client, bookUrl);
+
+                // word and phase
+                FetchWord(paragraph, objWord);
+
+                FetchWordPhrase(paragraph, objWord);
+
+                FetchSentence(paragraph, objWord);
+
+                newWords.Add(objWord);
+
+                progressBar1.Value += progressBar1.LargeChange;
+            }
+
             course.NewWords = newWords;
 
             await MyDataSerializer<Course>.SaveObjectsAsync(course, ViewModel.CourseId);
 
-            ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE;
+            ViewModel.DownloadingStatus = Constants.DOWNLOAD_COMPLETE + "Text B"; ;
+
+
+
+
+            //-----------------------
+
+
+
 
             NavigateToLearningWord();
         }
